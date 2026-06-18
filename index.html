@@ -14,7 +14,6 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#eef2f9;color:var(--ink)}
 
-/* sidebar */
 .sidebar{position:fixed;left:0;top:0;width:240px;height:100%;background:var(--bg);color:#cbd5e1;padding:22px 16px;overflow:auto}
 .brand{display:flex;align-items:center;gap:10px;margin:4px 6px 22px}
 .brand .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
@@ -26,7 +25,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-seri
 .nav .ic{width:20px;text-align:center;font-size:15px}
 .sidebar .foot{margin-top:18px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px;color:#93a4bd}
 
-/* main */
 .main{margin-left:240px;padding:26px 30px 60px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .topbar h1{font-size:22px;margin:0}
@@ -38,12 +36,10 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-seri
 .status.err{background:#fef2f2;color:#991b1b;border-color:#fecaca}
 .status.err .pulse{background:var(--red)}
 
-/* pages */
 .page{display:none;animation:fade .25s ease}
 .page.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* KPI cards */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .card{background:var(--panel);padding:18px;border-radius:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .card .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
@@ -52,7 +48,6 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-seri
 .card .ico{position:absolute;right:16px;top:16px;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--soft)}
 .card .ring{position:absolute;right:-30px;bottom:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.10),transparent 70%)}
 
-/* sections */
 .section{background:var(--panel);margin-top:18px;padding:20px 22px;border-radius:16px;box-shadow:var(--shadow)}
 .section h2{font-size:16px;margin:0 0 2px}
 .section .desc{color:var(--muted);font-size:12.5px;margin:0 0 14px}
@@ -61,12 +56,13 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-seri
 .sec-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
 .sec-head .desc{margin:0}
 
-/* table */
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 th{padding:10px;text-align:left;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--line)}
 td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tbody tr:hover{background:var(--soft)}
+tbody tr.clickable{cursor:pointer}
+tbody tr.sel{background:#eef4ff}
 .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600}
 .pill.green{background:#ecfdf5;color:#047857}
 .pill.blue{background:#eff6ff;color:#1d4ed8}
@@ -74,7 +70,6 @@ tbody tr:hover{background:var(--soft)}
 .pill.gray{background:#f1f5f9;color:#475569}
 .pill.purple{background:#f5f3ff;color:#6d28d9}
 
-/* progress */
 .progwrap{display:flex;align-items:center;gap:10px;min-width:140px}
 .progress{flex:1;height:8px;background:#e9eef6;border-radius:20px;overflow:hidden}
 .bar{height:8px;border-radius:20px;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0;transition:width .9s ease}
@@ -83,14 +78,24 @@ tbody tr:hover{background:var(--soft)}
 .bar.red{background:linear-gradient(90deg,#f87171,#ef4444)}
 .prog-num{font-size:12px;font-weight:700;width:38px;text-align:right}
 
-/* charts */
-.chart-box{position:relative;height:260px}
-.chart-box.sm{height:230px}
+.chart-box{position:relative;height:280px}
+.chart-box.sm{height:240px}
 .gauge-center{position:absolute;top:54%;left:50%;transform:translate(-50%,-50%);text-align:center}
 .gauge-center .g-num{font-size:34px;font-weight:800}
 .gauge-center .g-lbl{font-size:11px;color:var(--muted);font-weight:600}
 
-/* buttons / forms */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:8px}
+.chip:hover{border-color:var(--brand)}
+.chip.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}
+.chip .av{width:20px;height:20px;border-radius:50%;background:var(--soft);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.chip.active .av{background:rgba(255,255,255,.25);color:#fff}
+
+.minicards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.mini{background:var(--soft);border-radius:12px;padding:13px 15px}
+.mini .l{font-size:11px;color:var(--muted);font-weight:600}
+.mini .v{font-size:20px;font-weight:800;margin-top:3px}
+
 .btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;border-radius:10px;padding:9px 14px;font-size:13px;display:inline-flex;align-items:center;gap:7px}
 .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
 .btn.primary:hover{filter:brightness(1.05)}
@@ -117,9 +122,8 @@ tbody tr:hover{background:var(--soft)}
 .toast.err{background:var(--red)}
 .empty{color:var(--muted);font-size:13px;padding:14px 10px}
 
-/* mobile top tabs */
 .mtabs{display:none}
-@media(max-width:900px){.row2,.row2b{grid-template-columns:1fr}}
+@media(max-width:900px){.row2,.row2b{grid-template-columns:1fr}.minicards{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){
   .cards{grid-template-columns:repeat(2,1fr)}
   .main{margin-left:0;padding:16px}
@@ -143,17 +147,12 @@ tbody tr:hover{background:var(--soft)}
 
 <main class="main">
   <div class="topbar">
-    <div>
-      <h1 id="pageTitle">Overview</h1>
-      <p id="pageDesc">Your promotion readiness at a glance.</p>
-    </div>
+    <div><h1 id="pageTitle">Overview</h1><p id="pageDesc">Your promotion readiness at a glance.</p></div>
     <div style="display:flex;gap:10px;align-items:center">
       <span class="status" id="connectionStatus"><span class="pulse"></span>Using sample data</span>
       <button class="btn ghost sm" onclick="loadData()">↻ Refresh</button>
     </div>
   </div>
-
-  <!-- mobile tab strip -->
   <div class="mtabs" id="mtabs"></div>
 
   <!-- ===== OVERVIEW ===== -->
@@ -168,18 +167,14 @@ tbody tr:hover{background:var(--soft)}
     </div>
     <div class="row2">
       <div class="section">
-        <h2>Promotion Scorecard</h2>
-        <p class="desc">Current progress vs. target across the five promotion criteria.</p>
+        <h2>Promotion Scorecard</h2><p class="desc">Current progress vs. target across the five promotion criteria.</p>
         <div class="chart-box"><canvas id="scorecardChart"></canvas></div>
         <table id="scorecardTable" style="margin-top:14px"></table>
       </div>
       <div class="section">
-        <h2>Readiness Gauge</h2>
-        <p class="desc">Composite of all weighted criteria.</p>
-        <div class="chart-box" style="position:relative">
-          <canvas id="gaugeChart"></canvas>
-          <div class="gauge-center"><div class="g-num" id="gaugeNum">72%</div><div class="g-lbl">READY</div></div>
-        </div>
+        <h2>Readiness Gauge</h2><p class="desc">Composite of all weighted criteria.</p>
+        <div class="chart-box" style="position:relative"><canvas id="gaugeChart"></canvas>
+          <div class="gauge-center"><div class="g-num" id="gaugeNum">72%</div><div class="g-lbl">READY</div></div></div>
       </div>
     </div>
   </div>
@@ -187,71 +182,67 @@ tbody tr:hover{background:var(--soft)}
   <!-- ===== ANALYTICS ===== -->
   <div class="page" id="page-analytics">
     <div class="row2b">
-      <div class="section">
-        <h2>Revenue by Trainee</h2>
-        <p class="desc">Billable revenue influenced per developer.</p>
-        <div class="chart-box sm"><canvas id="revenueChart"></canvas></div>
-      </div>
-      <div class="section">
-        <h2>Architecture Asset Value</h2>
-        <p class="desc">Reusable IP value contribution by asset.</p>
-        <div class="chart-box sm"><canvas id="assetChart"></canvas></div>
-      </div>
+      <div class="section"><h2>Team Revenue Over Time</h2><p class="desc">Cumulative billable revenue influenced, per trainee.</p><div class="chart-box sm"><canvas id="anRevChart"></canvas></div></div>
+      <div class="section"><h2>Utilization Over Time</h2><p class="desc">Monthly billable utilization trend, per trainee.</p><div class="chart-box sm"><canvas id="anUtilChart"></canvas></div></div>
     </div>
     <div class="row2b">
-      <div class="section">
-        <h2>Utilization by Trainee</h2>
-        <p class="desc">Current billable utilization across the team.</p>
-        <div class="chart-box sm"><canvas id="utilChart"></canvas></div>
-      </div>
-      <div class="section">
-        <h2>AI Hours Saved by Prompt</h2>
-        <p class="desc">Estimated hours saved per reusable prompt.</p>
-        <div class="chart-box sm"><canvas id="promptChart"></canvas></div>
-      </div>
+      <div class="section"><h2>AI Hours Saved — Growth</h2><p class="desc">Cumulative hours saved across the prompt portfolio.</p><div class="chart-box sm"><canvas id="anAiChart"></canvas></div></div>
+      <div class="section"><h2>Architecture Asset Value</h2><p class="desc">Reusable IP value contribution by asset.</p><div class="chart-box sm"><canvas id="anAssetChart"></canvas></div></div>
     </div>
   </div>
 
   <!-- ===== MCE ===== -->
   <div class="page" id="page-mce">
     <section class="section">
-      <div class="sec-head">
-        <div><h2>MCE Training Program</h2><p class="desc">Mid-Career Engineers you are developing into billable resources.</p></div>
-        <button class="btn primary sm" onclick="openForm('trainee','MCE')">+ Add trainee</button>
-      </div>
+      <div class="sec-head"><div><h2>MCE Training Program</h2><p class="desc">Click a trainee to see their timeline.</p></div>
+        <button class="btn primary sm" onclick="openForm('trainee','MCE')">+ Add trainee</button></div>
       <table id="mceTable"></table>
+    </section>
+    <section class="section">
+      <div class="sec-head"><div><h2 id="mceTlTitle">Trainee Timeline</h2><p class="desc">Revenue and utilization growth over time.</p></div></div>
+      <div class="chips" id="mceChips"></div>
+      <div class="minicards" id="mceMini"></div>
+      <div class="chart-box"><canvas id="mceTlChart"></canvas></div>
     </section>
   </div>
 
   <!-- ===== MCP ===== -->
   <div class="page" id="page-mcp">
     <section class="section">
-      <div class="sec-head">
-        <div><h2>MCP Training Program</h2><p class="desc">Master Certified Professionals in development.</p></div>
-        <button class="btn primary sm" onclick="openForm('trainee','MCP')">+ Add trainee</button>
-      </div>
+      <div class="sec-head"><div><h2>MCP Training Program</h2><p class="desc">Click a trainee to see their timeline.</p></div>
+        <button class="btn primary sm" onclick="openForm('trainee','MCP')">+ Add trainee</button></div>
       <table id="mcpTable"></table>
+    </section>
+    <section class="section">
+      <div class="sec-head"><div><h2 id="mcpTlTitle">Trainee Timeline</h2><p class="desc">Revenue and utilization growth over time.</p></div></div>
+      <div class="chips" id="mcpChips"></div>
+      <div class="minicards" id="mcpMini"></div>
+      <div class="chart-box"><canvas id="mcpTlChart"></canvas></div>
     </section>
   </div>
 
   <!-- ===== AI ===== -->
   <div class="page" id="page-ai">
     <section class="section">
-      <div class="sec-head">
-        <div><h2>AI / Vulcan Prompt Portfolio</h2><p class="desc">Reusable prompts and automations driving hours saved.</p></div>
-        <button class="btn primary sm" onclick="openForm('prompt')">+ Add prompt</button>
-      </div>
+      <div class="sec-head"><div><h2>AI / Vulcan Prompt Portfolio</h2><p class="desc">Reusable prompts and automations driving hours saved.</p></div>
+        <button class="btn primary sm" onclick="openForm('prompt')">+ Add prompt</button></div>
       <table id="promptTable"></table>
     </section>
+    <section class="section">
+      <h2>Hours Saved — Growth</h2><p class="desc">Cumulative hours saved as the portfolio matures.</p>
+      <div class="chart-box"><canvas id="aiGrowthChart"></canvas></div>
+    </section>
+    <div class="row2b">
+      <div class="section"><h2>Hours Saved by Project</h2><p class="desc">Total hours saved on each project the prompts touched.</p><div class="chart-box sm"><canvas id="aiProjectChart"></canvas></div></div>
+      <div class="section"><h2>Reuse Multiplier</h2><p class="desc">How many projects each prompt has been used across.</p><div class="chart-box sm"><canvas id="aiReuseChart"></canvas></div></div>
+    </div>
   </div>
 
   <!-- ===== ASSETS ===== -->
   <div class="page" id="page-assets">
     <section class="section">
-      <div class="sec-head">
-        <div><h2>Architecture Assets</h2><p class="desc">Reusable architecture IP and its dollar value.</p></div>
-        <button class="btn primary sm" onclick="openForm('asset')">+ Add asset</button>
-      </div>
+      <div class="sec-head"><div><h2>Architecture Assets</h2><p class="desc">Reusable architecture IP and its dollar value.</p></div>
+        <button class="btn primary sm" onclick="openForm('asset')">+ Add asset</button></div>
       <table id="assetTable"></table>
     </section>
   </div>
@@ -259,10 +250,8 @@ tbody tr:hover{background:var(--soft)}
   <!-- ===== EVIDENCE ===== -->
   <div class="page" id="page-evidence">
     <section class="section">
-      <div class="sec-head">
-        <div><h2>Principal Architect Evidence</h2><p class="desc">Logged evidence mapped to promotion criteria.</p></div>
-        <button class="btn primary sm" onclick="openForm('evidence')">+ Log evidence</button>
-      </div>
+      <div class="sec-head"><div><h2>Principal Architect Evidence</h2><p class="desc">Logged evidence mapped to promotion criteria.</p></div>
+        <button class="btn primary sm" onclick="openForm('evidence')">+ Log evidence</button></div>
       <table id="evidenceTable"></table>
     </section>
   </div>
@@ -270,10 +259,8 @@ tbody tr:hover{background:var(--soft)}
   <!-- ===== GOALS ===== -->
   <div class="page" id="page-goals">
     <section class="section">
-      <div class="sec-head">
-        <div><h2>Goals</h2><p class="desc">Quarterly and annual development goals.</p></div>
-        <button class="btn primary sm" onclick="openForm('goal')">+ Add goal</button>
-      </div>
+      <div class="sec-head"><div><h2>Goals</h2><p class="desc">Quarterly and annual development goals.</p></div>
+        <button class="btn primary sm" onclick="openForm('goal')">+ Add goal</button></div>
       <table id="goalTable"></table>
     </section>
   </div>
@@ -284,35 +271,43 @@ tbody tr:hover{background:var(--soft)}
   <div class="modal">
     <header><h3 id="modalTitle">Add</h3><p id="modalSub">Saves directly to your tracker</p></header>
     <div class="body" id="modalBody"></div>
-    <footer>
-      <button class="btn ghost" onclick="closeForm()">Cancel</button>
-      <button class="btn primary" id="modalSave" onclick="submitForm()">Save entry</button>
-    </footer>
+    <footer><button class="btn ghost" onclick="closeForm()">Cancel</button>
+      <button class="btn primary" id="modalSave" onclick="submitForm()">Save entry</button></footer>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* =========================================================
-   CONFIG — paste your Apps Script Web App URL.
-   READ:  GET  API_URL?action=getAll
-   WRITE: POST API_URL  { action:"add", sheet, row:{...} }
-   See BACKEND_SETUP.md for the doPost handler.
-========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycby92tkowHqyUZwT_n5oFTUfsCZ8_0cwy3f3pX4v3uuG2MRbwpZ47RK4hauXH7ZAHXBN/exec";
+/* CONFIG — paste your Apps Script Web App URL. See BACKEND_SETUP.md */
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun"];
 
-/* ---------- tabs ---------- */
 const TABS = [
   {id:"overview", ic:"📊", label:"Overview",            desc:"Your promotion readiness at a glance."},
-  {id:"analytics",ic:"📈", label:"Analytics",            desc:"Deeper charts across revenue, utilization and impact."},
-  {id:"mce",      ic:"🧑‍💻", label:"MCE Training",        desc:"Mid-Career Engineers in development."},
-  {id:"mcp",      ic:"🎓", label:"MCP Training",          desc:"Master Certified Professionals in development."},
-  {id:"ai",       ic:"⚡", label:"AI / Vulcan",           desc:"Reusable prompt portfolio."},
+  {id:"analytics",ic:"📈", label:"Analytics",            desc:"The headline trends — revenue, utilization and AI impact over time."},
+  {id:"mce",      ic:"🧑‍💻", label:"MCE Training",        desc:"Mid-Career Engineers — click a person for their timeline."},
+  {id:"mcp",      ic:"🎓", label:"MCP Training",          desc:"Master Certified Professionals — click a person for their timeline."},
+  {id:"ai",       ic:"⚡", label:"AI / Vulcan",           desc:"Prompt portfolio growth, hours saved and reuse."},
   {id:"assets",   ic:"🏗️", label:"Architecture Assets",   desc:"Reusable architecture IP and value."},
   {id:"evidence", ic:"📁", label:"Evidence",              desc:"Logged evidence for your promotion case."},
   {id:"goals",    ic:"🎯", label:"Goals",                 desc:"Quarterly and annual development goals."}
 ];
-let currentTab = "overview";
+let currentTab="overview";
+const selectedTrainee={MCE:null,MCP:null};
+
+const $ = id => document.getElementById(id);
+function num(v){ return Number(String(v ?? "0").replace(/[$,%\s]/g,"")) || 0; }
+function money(v){ const n=num(v); if(!n) return "$0"; return n>=1000 ? "$"+(n/1000).toFixed(1)+"K" : "$"+n.toLocaleString(); }
+function pct(v){ const raw=String(v ?? "0"); if(raw.includes("%")) return raw; const n=num(raw); return (n<=1? Math.round(n*100):Math.round(n))+"%"; }
+function toast(msg,err){ const t=$("toast"); t.textContent=msg; t.className="toast show"+(err?" err":""); setTimeout(()=>t.className="toast",2600); }
+function statusBadge(s){ s=(s||"").toLowerCase();
+  if(s.includes("billable")||s.includes("done")||s.includes("complete")||s.includes("live")) return "green";
+  if(s.includes("progress")||s.includes("training")||s.includes("draft")||s.includes("review")) return "amber";
+  if(s.includes("plan")||s.includes("backlog")||s.includes("not")) return "gray"; return "blue"; }
+function progressCell(p){ const v=Math.max(0,Math.min(100,Math.round(num(p)<=1?num(p)*100:num(p))));
+  const cls=v>=80?"green":v>=50?"amber":"red";
+  return `<div class="progwrap"><div class="progress"><div class="bar ${cls}" style="width:${v}%"></div></div><span class="prog-num">${v}%</span></div>`; }
+function initials(n){ return (n||"?").split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase(); }
 
 function buildNav(){
   $("nav").innerHTML = TABS.map(t=>`<button data-tab="${t.id}" onclick="showTab('${t.id}')"><span class="ic">${t.ic}</span>${t.label}</button>`).join("");
@@ -322,29 +317,9 @@ function showTab(id){
   currentTab=id;
   document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+id));
   document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
-  const t=TABS.find(x=>x.id===id);
-  $("pageTitle").textContent=t.label; $("pageDesc").textContent=t.desc;
+  const t=TABS.find(x=>x.id===id); $("pageTitle").textContent=t.label; $("pageDesc").textContent=t.desc;
   window.scrollTo({top:0,behavior:"smooth"});
   renderChartsFor(id);
-}
-
-/* ---------- helpers ---------- */
-const $ = id => document.getElementById(id);
-function num(v){ return Number(String(v ?? "0").replace(/[$,%\s]/g,"")) || 0; }
-function money(v){ const n=num(v); if(!n) return "$0"; return n>=1000 ? "$"+(n/1000).toFixed(1)+"K" : "$"+n.toLocaleString(); }
-function pct(v){ const raw=String(v ?? "0"); if(raw.includes("%")) return raw; const n=num(raw); return (n<=1? Math.round(n*100):Math.round(n))+"%"; }
-function toast(msg,err){ const t=$("toast"); t.textContent=msg; t.className="toast show"+(err?" err":""); setTimeout(()=>t.className="toast",2600); }
-function statusBadge(s){
-  s=(s||"").toLowerCase();
-  if(s.includes("billable")||s.includes("done")||s.includes("complete")||s.includes("live")) return "green";
-  if(s.includes("progress")||s.includes("training")||s.includes("draft")||s.includes("review")) return "amber";
-  if(s.includes("plan")||s.includes("backlog")||s.includes("not")) return "gray";
-  return "blue";
-}
-function progressCell(p){
-  const v=Math.max(0,Math.min(100,Math.round(num(p)<=1?num(p)*100:num(p))));
-  const cls = v>=80?"green":v>=50?"amber":"red";
-  return `<div class="progwrap"><div class="progress"><div class="bar ${cls}" style="width:${v}%"></div></div><span class="prog-num">${v}%</span></div>`;
 }
 
 /* ---------- sample data ---------- */
@@ -366,10 +341,40 @@ const SAMPLE = {
     {Name:"Marcus",Program:"MCE",Status:"In Training",["Current Utilization"]:30,Revenue:4200,["Active Projects"]:"Internal"},
     {Name:"Priya",Program:"MCP",Status:"In Training",["Current Utilization"]:25,Revenue:0,["Active Projects"]:"Shadowing Lincoln"}
   ],
+  /* monthly timeline per trainee: Revenue is cumulative, Utilization is the value that month */
+  Trainee_Timeline: [
+    {Name:"Jerry",Month:"Jan",Revenue:1000,Utilization:20},{Name:"Jerry",Month:"Feb",Revenue:3000,Utilization:30},
+    {Name:"Jerry",Month:"Mar",Revenue:6000,Utilization:42},{Name:"Jerry",Month:"Apr",Revenue:9000,Utilization:51},
+    {Name:"Jerry",Month:"May",Revenue:11500,Utilization:58},{Name:"Jerry",Month:"Jun",Revenue:14200,Utilization:62},
+    {Name:"Alyssa",Month:"Jan",Revenue:500,Utilization:15},{Name:"Alyssa",Month:"Feb",Revenue:1500,Utilization:22},
+    {Name:"Alyssa",Month:"Mar",Revenue:3500,Utilization:30},{Name:"Alyssa",Month:"Apr",Revenue:5500,Utilization:38},
+    {Name:"Alyssa",Month:"May",Revenue:7500,Utilization:44},{Name:"Alyssa",Month:"Jun",Revenue:9800,Utilization:48},
+    {Name:"Marcus",Month:"Jan",Revenue:0,Utilization:5},{Name:"Marcus",Month:"Feb",Revenue:500,Utilization:10},
+    {Name:"Marcus",Month:"Mar",Revenue:1200,Utilization:15},{Name:"Marcus",Month:"Apr",Revenue:2200,Utilization:22},
+    {Name:"Marcus",Month:"May",Revenue:3200,Utilization:27},{Name:"Marcus",Month:"Jun",Revenue:4200,Utilization:30},
+    {Name:"Priya",Month:"Jan",Revenue:0,Utilization:5},{Name:"Priya",Month:"Feb",Revenue:0,Utilization:8},
+    {Name:"Priya",Month:"Mar",Revenue:0,Utilization:12},{Name:"Priya",Month:"Apr",Revenue:0,Utilization:18},
+    {Name:"Priya",Month:"May",Revenue:0,Utilization:22},{Name:"Priya",Month:"Jun",Revenue:0,Utilization:25}
+  ],
   Prompt_Portfolio: [
     {["Prompt Name"]:"Solution Design Generator",Platform:"Vulcan",Status:"Live",["Est Hours Saved / Use"]:6,Notes:"Used on 4 SOWs"},
     {["Prompt Name"]:"Architecture Review Checklist",Platform:"Claude",Status:"Live",["Est Hours Saved / Use"]:3,Notes:"Standardized reviews"},
     {["Prompt Name"]:"RFP Response Drafter",Platform:"Vulcan",Status:"Draft",["Est Hours Saved / Use"]:8,Notes:"In testing"}
+  ],
+  /* each row = one project a prompt was used on, plus hours saved there */
+  Prompt_Usage: [
+    {["Prompt Name"]:"Solution Design Generator",Project:"Lincoln",["Hours Saved"]:18},
+    {["Prompt Name"]:"Solution Design Generator",Project:"Covetrus",["Hours Saved"]:12},
+    {["Prompt Name"]:"Solution Design Generator",Project:"Everest",["Hours Saved"]:10},
+    {["Prompt Name"]:"Solution Design Generator",Project:"Acme",["Hours Saved"]:8},
+    {["Prompt Name"]:"Architecture Review Checklist",Project:"Lincoln",["Hours Saved"]:9},
+    {["Prompt Name"]:"Architecture Review Checklist",Project:"Everest",["Hours Saved"]:6},
+    {["Prompt Name"]:"Architecture Review Checklist",Project:"Covetrus",["Hours Saved"]:6},
+    {["Prompt Name"]:"RFP Response Drafter",Project:"Acme",["Hours Saved"]:16}
+  ],
+  AI_Timeline: [
+    {Month:"Jan",["Hours Saved"]:40},{Month:"Feb",["Hours Saved"]:95},{Month:"Mar",["Hours Saved"]:150},
+    {Month:"Apr",["Hours Saved"]:230},{Month:"May",["Hours Saved"]:310},{Month:"Jun",["Hours Saved"]:387}
   ],
   Architecture_Assets: [
     {["Asset Name"]:"Reference Integration Pattern",Category:"Pattern",Status:"Live",["Projects Using"]:"Lincoln; Covetrus",["Dollar Value"]:22000},
@@ -391,116 +396,173 @@ const SAMPLE = {
 
 let DATA = JSON.parse(JSON.stringify(SAMPLE));
 let charts = {};
+const PALETTE=["#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b","#ef4444","#0ea5e9","#db2777"];
+function destroy(...keys){ keys.forEach(k=>{ if(charts[k]){charts[k].destroy(); charts[k]=null;} }); }
 
-/* ---------- table renderer ---------- */
-function renderTable(id, headers, rows, mapFn, emptyMsg){
-  const t=$(id);
-  let html = "<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>";
-  if(!rows || !rows.length){
-    html += `<tr><td colspan="${headers.length}" class="empty">${emptyMsg||"No entries yet — use the + button to add one."}</td></tr>`;
-  } else {
-    rows.forEach(r=> html += "<tr>"+mapFn(r).map(c=>`<td>${c??""}</td>`).join("")+"</tr>");
-  }
-  t.innerHTML = html+"</tbody>";
+/* timeline for a trainee, aligned to MONTHS; synthesizes a ramp if no rows exist */
+function getTL(name){
+  const rows=(DATA.Trainee_Timeline||[]).filter(r=>r.Name===name);
+  if(rows.length) return MONTHS.map(mo=>{const r=rows.find(x=>x.Month===mo)||{};return {rev:num(r.Revenue),util:num(r.Utilization)};});
+  const t=(DATA.Trainees||[]).find(x=>x.Name===name)||{};
+  const rev=num(t.Revenue), util=num(t["Current Utilization"]);
+  return MONTHS.map((mo,i)=>({rev:Math.round(rev*(i+1)/MONTHS.length),util:Math.round(util*(i+1)/MONTHS.length)}));
 }
 
-/* ---------- render tables + KPIs ---------- */
+/* ---------- table renderer ---------- */
+function renderTable(id, headers, rows, mapFn, emptyMsg, rowAttr){
+  const t=$(id);
+  let html="<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>";
+  if(!rows||!rows.length){ html+=`<tr><td colspan="${headers.length}" class="empty">${emptyMsg||"No entries yet — use the + button to add one."}</td></tr>`; }
+  else rows.forEach(r=> html+=`<tr ${rowAttr?rowAttr(r):""}>`+mapFn(r).map(c=>`<td>${c??""}</td>`).join("")+"</tr>");
+  t.innerHTML=html+"</tbody>";
+}
+
+/* ---------- render ---------- */
 function render(){
-  const metrics = DATA.Dashboard_Metrics||[];
-  const m = name => metrics.find(x=>x.Metric===name)||{};
-  const cur = name => m(name)["Current Value"];
+  const metrics=DATA.Dashboard_Metrics||[];
+  const m=name=>metrics.find(x=>x.Metric===name)||{}; const cur=name=>m(name)["Current Value"];
+  $("kpiReadiness").textContent=pct(cur("Principal Architect Readiness"));
+  $("kpiPeople").textContent=(DATA.Trainees||[]).length||(cur("People Trained")??0);
+  $("kpiBillable").textContent=cur("Billable Resources")??0;
+  $("kpiRevenue").textContent=money(cur("Revenue Generated"));
+  $("kpiHours").textContent=cur("AI Hours Saved")??0;
+  $("kpiDays").textContent=cur("Days Remaining")??0;
+  $("footDays").textContent=(cur("Days Remaining")??0)+" days left";
 
-  $("kpiReadiness").textContent = pct(cur("Principal Architect Readiness"));
-  $("kpiPeople").textContent   = (DATA.Trainees||[]).length || (cur("People Trained")??0);
-  $("kpiBillable").textContent = cur("Billable Resources")??0;
-  $("kpiRevenue").textContent  = money(cur("Revenue Generated"));
-  $("kpiHours").textContent    = cur("AI Hours Saved")??0;
-  $("kpiDays").textContent     = cur("Days Remaining")??0;
-  $("footDays").textContent    = (cur("Days Remaining")??0)+" days left";
-
-  const score = metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
-  renderTable("scorecardTable",["Category","Current","Target","Progress"],score, x=>{
+  const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
+  renderTable("scorecardTable",["Category","Current","Target","Progress"],score,x=>{
     const u=x.Unit, fmt=v=> u==="$"?money(v): u==="%"?pct(v): v;
-    const prog = num(x.Target)? Math.round(num(x["Current Value"])/num(x.Target)*100):0;
-    return [x.Metric, fmt(x["Current Value"]), fmt(x.Target), progressCell(prog)];
+    const prog=num(x.Target)?Math.round(num(x["Current Value"])/num(x.Target)*100):0;
+    return [x.Metric,fmt(x["Current Value"]),fmt(x.Target),progressCell(prog)];
   });
 
-  const tr = DATA.Trainees||[];
-  const traineeRow = t=>[t.Name,`<span class="pill ${statusBadge(t.Status)}">${t.Status||""}</span>`,progressCell(t["Current Utilization"]),money(t.Revenue),t["Active Projects"]||""];
-  renderTable("mceTable",["Name","Status","Utilization","Revenue","Projects"],tr.filter(t=>t.Program==="MCE"),traineeRow,"No MCE trainees yet.");
-  renderTable("mcpTable",["Name","Status","Utilization","Revenue","Projects"],tr.filter(t=>t.Program==="MCP"),traineeRow,"No MCP trainees yet.");
+  const tr=DATA.Trainees||[];
+  const traineeRow=t=>[t.Name,`<span class="pill ${statusBadge(t.Status)}">${t.Status||""}</span>`,progressCell(t["Current Utilization"]),money(t.Revenue),t["Active Projects"]||""];
+  const mceList=tr.filter(t=>t.Program==="MCE"), mcpList=tr.filter(t=>t.Program==="MCP");
+  renderTable("mceTable",["Name","Status","Utilization","Revenue","Projects"],mceList,traineeRow,"No MCE trainees yet.",
+    t=>`class="clickable ${t.Name===selectedTrainee.MCE?'sel':''}" onclick="selectTrainee('MCE','${(t.Name||'').replace(/'/g,'')}')"`);
+  renderTable("mcpTable",["Name","Status","Utilization","Revenue","Projects"],mcpList,traineeRow,"No MCP trainees yet.",
+    t=>`class="clickable ${t.Name===selectedTrainee.MCP?'sel':''}" onclick="selectTrainee('MCP','${(t.Name||'').replace(/'/g,'')}')"`);
 
   renderTable("promptTable",["Prompt","Platform","Status","Hrs Saved / Use","Notes"],DATA.Prompt_Portfolio||[],
     p=>[p["Prompt Name"],`<span class="pill purple">${p.Platform||""}</span>`,`<span class="pill ${statusBadge(p.Status)}">${p.Status||""}</span>`,p["Est Hours Saved / Use"]??"",p.Notes||""]);
-
   renderTable("assetTable",["Asset","Category","Status","Projects","Value"],DATA.Architecture_Assets||[],
     a=>[a["Asset Name"],`<span class="pill blue">${a.Category||""}</span>`,`<span class="pill ${statusBadge(a.Status)}">${a.Status||""}</span>`,a["Projects Using"]||"",money(a["Dollar Value"])]);
-
   renderTable("evidenceTable",["Date","Category","Evidence","Impact"],DATA.Evidence_Log||[],
     e=>[e.Date,`<span class="pill gray">${e.Category||""}</span>`,e["Evidence Title"],`<b style="color:#047857">${e["Metric Impact"]||""}</b>`]);
-
   renderTable("goalTable",["Goal","Type","Current","Target","Progress"],DATA.Goals||[],
     g=>[g["Goal Name"],`<span class="pill blue">${g["Goal Type"]||""}</span>`,g.Current,g.Target,progressCell(g.Progress)]);
 
   renderChartsFor(currentTab);
 }
 
-/* ---------- charts (rendered only for the visible tab) ---------- */
-const PALETTE=["#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b","#ef4444","#0ea5e9","#db2777"];
-function destroy(...keys){ keys.forEach(k=>{ if(charts[k]){charts[k].destroy(); charts[k]=null;} }); }
+/* ---------- trainee selection ---------- */
+function selectTrainee(program,name){
+  selectedTrainee[program]=name;
+  // update table row highlight in place (no scroll, no full re-render)
+  const tableId=program==="MCE"?"mceTable":"mcpTable";
+  document.querySelectorAll(`#${tableId} tbody tr`).forEach(r=>{
+    r.classList.toggle("sel", r.textContent.trim().startsWith(name));
+  });
+  renderTraineeSection(program);
+}
 
+function renderTraineeSection(program){
+  const list=(DATA.Trainees||[]).filter(t=>t.Program===program);
+  const chipBox=$(program==="MCE"?"mceChips":"mcpChips");
+  const miniBox=$(program==="MCE"?"mceMini":"mcpMini");
+  const titleEl=$(program==="MCE"?"mceTlTitle":"mcpTlTitle");
+  const key=program==="MCE"?"mceTl":"mcpTl"; const canvas=$(program==="MCE"?"mceTlChart":"mcpTlChart");
+  if(!list.length){ chipBox.innerHTML='<span class="empty">Add a trainee to see their timeline.</span>'; miniBox.innerHTML=""; titleEl.textContent="Trainee Timeline"; destroy(key); return; }
+  if(!selectedTrainee[program]||!list.find(t=>t.Name===selectedTrainee[program])) selectedTrainee[program]=list[0].Name;
+  const sel=selectedTrainee[program];
+  chipBox.innerHTML=list.map(t=>`<button class="chip ${t.Name===sel?'active':''}" onclick="selectTrainee('${program}','${(t.Name||'').replace(/'/g,'')}')"><span class="av">${initials(t.Name)}</span>${t.Name}</button>`).join("");
+
+  const tl=getTL(sel); const t=list.find(x=>x.Name===sel)||{};
+  const revGrowth=tl[tl.length-1].rev-tl[0].rev;
+  miniBox.innerHTML=`
+    <div class="mini"><div class="l">Current Revenue</div><div class="v">${money(t.Revenue)}</div></div>
+    <div class="mini"><div class="l">Revenue Growth (6mo)</div><div class="v" style="color:#047857">+${money(revGrowth)}</div></div>
+    <div class="mini"><div class="l">Current Utilization</div><div class="v">${pct(t["Current Utilization"])}</div></div>
+    <div class="mini"><div class="l">Status</div><div class="v" style="font-size:15px"><span class="pill ${statusBadge(t.Status)}">${t.Status||""}</span></div></div>`;
+  titleEl.textContent=sel+" — Timeline";
+
+  destroy(key);
+  charts[key]=new Chart(canvas,{type:"line",
+    data:{labels:MONTHS,datasets:[
+      {label:"Revenue",data:tl.map(x=>x.rev),borderColor:"#2563eb",backgroundColor:"rgba(37,99,235,.12)",yAxisID:"y",tension:.35,fill:true,pointRadius:4,pointBackgroundColor:"#2563eb"},
+      {label:"Utilization %",data:tl.map(x=>x.util),borderColor:"#7c3aed",backgroundColor:"transparent",yAxisID:"y1",tension:.35,pointRadius:4,pointBackgroundColor:"#7c3aed"}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{
+        y:{position:"left",grid:{color:"#eef2f9"},title:{display:true,text:"Revenue"},ticks:{callback:v=>"$"+(v/1000)+"K"}},
+        y1:{position:"right",max:100,grid:{display:false},title:{display:true,text:"Utilization %"},ticks:{callback:v=>v+"%"}},
+        x:{grid:{display:false}}},
+      plugins:{legend:{display:true,position:"top"},tooltip:{callbacks:{label:c=>c.dataset.label==="Revenue"?"Revenue: "+money(c.parsed.y):"Utilization: "+c.parsed.y+"%"}}}}});
+}
+
+/* ---------- charts per tab ---------- */
 function renderChartsFor(tab){
-  Chart.defaults.font.family="Inter,system-ui,sans-serif";
-  Chart.defaults.color="#64748b";
-  const metrics=DATA.Dashboard_Metrics||[];
-  const m=name=>metrics.find(x=>x.Metric===name)||{};
+  Chart.defaults.font.family="Inter,system-ui,sans-serif"; Chart.defaults.color="#64748b";
+  const metrics=DATA.Dashboard_Metrics||[]; const m=name=>metrics.find(x=>x.Metric===name)||{};
 
   if(tab==="overview"){
     destroy("gauge","scorecard");
-    const readiness=num(m("Principal Architect Readiness")["Current Value"]);
-    $("gaugeNum").textContent=readiness+"%";
-    charts.gauge=new Chart($("gaugeChart"),{type:"doughnut",
-      data:{datasets:[{data:[readiness,100-readiness],backgroundColor:["#2563eb","#e9eef6"],borderWidth:0}]},
+    const readiness=num(m("Principal Architect Readiness")["Current Value"]); $("gaugeNum").textContent=readiness+"%";
+    charts.gauge=new Chart($("gaugeChart"),{type:"doughnut",data:{datasets:[{data:[readiness,100-readiness],backgroundColor:["#2563eb","#e9eef6"],borderWidth:0}]},
       options:{rotation:-90,circumference:180,cutout:"72%",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}}}});
     const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
     charts.scorecard=new Chart($("scorecardChart"),{type:"bar",
-      data:{labels:score.map(x=>x.Metric),datasets:[{label:"% to target",
-        data:score.map(x=>num(x.Target)?Math.round(num(x["Current Value"])/num(x.Target)*100):0),
-        backgroundColor:"#2563eb",borderRadius:6,barThickness:22}]},
-      options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,
-        scales:{x:{max:100,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"%"}},y:{grid:{display:false}}},
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+"% to target"}}}}});
+      data:{labels:score.map(x=>x.Metric),datasets:[{label:"% to target",data:score.map(x=>num(x.Target)?Math.round(num(x["Current Value"])/num(x.Target)*100):0),backgroundColor:"#2563eb",borderRadius:6,barThickness:22}]},
+      options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,scales:{x:{max:100,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"%"}},y:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+"% to target"}}}}});
   }
 
   if(tab==="analytics"){
-    destroy("revenue","asset","util","prompt");
-    const tr=(DATA.Trainees||[]).filter(t=>num(t.Revenue)>0);
-    charts.revenue=new Chart($("revenueChart"),{type:"bar",
-      data:{labels:tr.map(t=>t.Name),datasets:[{data:tr.map(t=>num(t.Revenue)),backgroundColor:PALETTE,borderRadius:6}]},
-      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>"$"+(v/1000)+"K"}},x:{grid:{display:false}}},
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.parsed.y)}}}}});
-
+    destroy("anRev","anUtil","anAi","anAsset");
+    const tr=DATA.Trainees||[];
+    const lineOpts=(fmt)=>({responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:fmt}},x:{grid:{display:false}}},plugins:{legend:{position:"top",labels:{boxWidth:12,font:{size:11}}}}});
+    charts.anRev=new Chart($("anRevChart"),{type:"line",
+      data:{labels:MONTHS,datasets:tr.map((t,i)=>({label:t.Name,data:getTL(t.Name).map(x=>x.rev),borderColor:PALETTE[i%PALETTE.length],backgroundColor:"transparent",tension:.35,pointRadius:3}))},
+      options:lineOpts(v=>"$"+(v/1000)+"K")});
+    charts.anUtil=new Chart($("anUtilChart"),{type:"line",
+      data:{labels:MONTHS,datasets:tr.map((t,i)=>({label:t.Name,data:getTL(t.Name).map(x=>x.util),borderColor:PALETTE[i%PALETTE.length],backgroundColor:"transparent",tension:.35,pointRadius:3}))},
+      options:lineOpts(v=>v+"%")});
+    const ai=DATA.AI_Timeline||[];
+    charts.anAi=new Chart($("anAiChart"),{type:"line",
+      data:{labels:ai.map(r=>r.Month),datasets:[{label:"Hours saved (cumulative)",data:ai.map(r=>num(r["Hours Saved"])),borderColor:"#16a34a",backgroundColor:"rgba(22,163,74,.12)",fill:true,tension:.35,pointRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false}}}});
     const as=DATA.Architecture_Assets||[];
-    charts.asset=new Chart($("assetChart"),{type:"doughnut",
+    charts.anAsset=new Chart($("anAssetChart"),{type:"doughnut",
       data:{labels:as.map(a=>a["Asset Name"]),datasets:[{data:as.map(a=>num(a["Dollar Value"])),backgroundColor:PALETTE,borderWidth:0}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:"60%",
-        plugins:{legend:{position:"right",labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+": "+money(c.parsed)}}}}});
+      options:{responsive:true,maintainAspectRatio:false,cutout:"60%",plugins:{legend:{position:"right",labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+": "+money(c.parsed)}}}}});
+  }
 
-    const allTr=DATA.Trainees||[];
-    charts.util=new Chart($("utilChart"),{type:"bar",
-      data:{labels:allTr.map(t=>t.Name),datasets:[{data:allTr.map(t=>num(t["Current Utilization"])),backgroundColor:"#7c3aed",borderRadius:6}]},
-      options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"%"}},x:{grid:{display:false}}},
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+"%"}}}}});
+  if(tab==="mce") renderTraineeSection("MCE");
+  if(tab==="mcp") renderTraineeSection("MCP");
 
-    const pp=DATA.Prompt_Portfolio||[];
-    charts.prompt=new Chart($("promptChart"),{type:"bar",
-      data:{labels:pp.map(p=>p["Prompt Name"]),datasets:[{data:pp.map(p=>num(p["Est Hours Saved / Use"])),backgroundColor:"#06b6d4",borderRadius:6,barThickness:24}]},
-      options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},y:{grid:{display:false}}},
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+" hrs / use"}}}}});
+  if(tab==="ai"){
+    destroy("aiGrowth","aiProject","aiReuse");
+    const ai=DATA.AI_Timeline||[];
+    charts.aiGrowth=new Chart($("aiGrowthChart"),{type:"line",
+      data:{labels:ai.map(r=>r.Month),datasets:[{label:"Hours saved (cumulative)",data:ai.map(r=>num(r["Hours Saved"])),borderColor:"#2563eb",backgroundColor:"rgba(37,99,235,.12)",fill:true,tension:.35,pointRadius:4,pointBackgroundColor:"#2563eb"}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+" hrs saved"}}}}});
+    // hours saved by project (aggregate Prompt_Usage)
+    const byProj={}; (DATA.Prompt_Usage||[]).forEach(u=>{ byProj[u.Project]=(byProj[u.Project]||0)+num(u["Hours Saved"]); });
+    const projLabels=Object.keys(byProj).sort((a,b)=>byProj[b]-byProj[a]);
+    charts.aiProject=new Chart($("aiProjectChart"),{type:"bar",
+      data:{labels:projLabels,datasets:[{data:projLabels.map(p=>byProj[p]),backgroundColor:PALETTE,borderRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+" hrs saved"}}}}});
+    // reuse multiplier: distinct projects per prompt
+    const byPrompt={}; (DATA.Prompt_Usage||[]).forEach(u=>{ (byPrompt[u["Prompt Name"]]=byPrompt[u["Prompt Name"]]||new Set()).add(u.Project); });
+    const pLabels=Object.keys(byPrompt);
+    charts.aiReuse=new Chart($("aiReuseChart"),{type:"bar",
+      data:{labels:pLabels,datasets:[{data:pLabels.map(p=>byPrompt[p].size),backgroundColor:"#7c3aed",borderRadius:6,barThickness:24}]},
+      options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:"#eef2f9"},ticks:{precision:0}},y:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+" projects"}}}}});
   }
 }
 
-/* ---------- data entry forms ---------- */
+/* ---------- forms ---------- */
 const FORMS = {
   trainee:{ title:"Add Trainee", sheet:"Trainees", fields:[
     {k:"Name",label:"Name",type:"text",req:true},
@@ -537,15 +599,13 @@ const FORMS = {
     {k:"Target",label:"Target value",type:"number"}
   ]}
 };
-
 let activeForm=null, presetProgram=null;
 function openForm(type,preset){
-  activeForm=type; presetProgram=preset||null;
-  const f=FORMS[type];
+  activeForm=type; presetProgram=preset||null; const f=FORMS[type];
   $("modalTitle").textContent=f.title;
-  $("modalSub").textContent = (API_URL.includes("PASTE_YOUR")?"Demo mode — saved to this view only":"Saves to your Google Sheet");
+  $("modalSub").textContent=(API_URL.includes("PASTE_YOUR")?"Demo mode — saved to this view only":"Saves to your Google Sheet");
   $("modalBody").innerHTML=f.fields.map(fl=>{
-    const val = (fl.k==="Program"&&preset)?preset:"";
+    const val=(fl.k==="Program"&&preset)?preset:"";
     if(fl.type==="select") return `<div class="field"><label>${fl.label}</label><select data-k="${fl.k}">${fl.opts.map(o=>`<option ${o===val?"selected":""}>${o}</option>`).join("")}</select></div>`;
     if(fl.type==="textarea") return `<div class="field"><label>${fl.label}</label><textarea data-k="${fl.k}" rows="2"></textarea></div>`;
     return `<div class="field"><label>${fl.label}${fl.req?" *":""}</label><input data-k="${fl.k}" type="${fl.type}" value="${val}"></div>`;
@@ -553,59 +613,40 @@ function openForm(type,preset){
   $("modalBg").classList.add("show");
 }
 function closeForm(){ $("modalBg").classList.remove("show"); activeForm=null; }
-
 async function submitForm(){
-  const f=FORMS[activeForm];
-  const row={}; let missing=false;
-  $("modalBody").querySelectorAll("[data-k]").forEach(el=>{
-    row[el.dataset.k]=el.value;
-    const fl=f.fields.find(x=>x.k===el.dataset.k);
-    if(fl&&fl.req&&!el.value.trim()) missing=true;
-  });
+  const f=FORMS[activeForm]; const row={}; let missing=false;
+  $("modalBody").querySelectorAll("[data-k]").forEach(el=>{ row[el.dataset.k]=el.value;
+    const fl=f.fields.find(x=>x.k===el.dataset.k); if(fl&&fl.req&&!el.value.trim()) missing=true; });
   if(missing){ toast("Fill in required fields",true); return; }
   if(presetProgram&&!row.Program) row.Program=presetProgram;
-  if(activeForm==="goal" && num(row.Target)) row.Progress=Math.round(num(row.Current)/num(row.Target)*100);
-
+  if(activeForm==="goal"&&num(row.Target)) row.Progress=Math.round(num(row.Current)/num(row.Target)*100);
   $("modalSave").textContent="Saving…"; $("modalSave").disabled=true;
   (DATA[f.sheet]=DATA[f.sheet]||[]).unshift(row);
-
   if(!API_URL.includes("PASTE_YOUR")){
-    try{
-      await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"add",sheet:f.sheet,row})});
-      toast("Saved to Google Sheet ✓");
-    }catch(e){ toast("Saved locally — sync failed",true); }
-  } else { toast("Added (demo mode) ✓"); }
-
-  $("modalSave").textContent="Save entry"; $("modalSave").disabled=false;
-  closeForm(); render();
+    try{ await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"add",sheet:f.sheet,row})}); toast("Saved to Google Sheet ✓"); }
+    catch(e){ toast("Saved locally — sync failed",true); }
+  } else toast("Added (demo mode) ✓");
+  $("modalSave").textContent="Save entry"; $("modalSave").disabled=false; closeForm(); render();
 }
 
-/* ---------- load from backend ---------- */
+/* ---------- load ---------- */
 async function loadData(){
-  if(!API_URL || API_URL.includes("PASTE_YOUR")){ render(); return; }
-  const badge=$("connectionStatus");
-  badge.className="status"; badge.innerHTML='<span class="pulse"></span>Connecting…';
+  if(!API_URL||API_URL.includes("PASTE_YOUR")){ render(); return; }
+  const badge=$("connectionStatus"); badge.className="status"; badge.innerHTML='<span class="pulse"></span>Connecting…';
   try{
-    const res=await fetch(API_URL+"?action=getAll");
-    const json=await res.json(); const d=json.data||{};
+    const res=await fetch(API_URL+"?action=getAll"); const json=await res.json(); const d=json.data||{};
     DATA={
-      Dashboard_Metrics: d.Dashboard_Metrics||SAMPLE.Dashboard_Metrics,
-      Trainees: d.Trainees||[], Prompt_Portfolio: d.Prompt_Portfolio||[],
-      Architecture_Assets: d.Architecture_Assets||[], Evidence_Log: d.Evidence_Log||[], Goals: d.Goals||[]
+      Dashboard_Metrics:d.Dashboard_Metrics||SAMPLE.Dashboard_Metrics,
+      Trainees:d.Trainees||[], Trainee_Timeline:d.Trainee_Timeline||[],
+      Prompt_Portfolio:d.Prompt_Portfolio||[], Prompt_Usage:d.Prompt_Usage||[], AI_Timeline:d.AI_Timeline||SAMPLE.AI_Timeline,
+      Architecture_Assets:d.Architecture_Assets||[], Evidence_Log:d.Evidence_Log||[], Goals:d.Goals||[]
     };
-    badge.className="status ok"; badge.innerHTML='<span class="pulse"></span>Connected to Google Sheet';
-    render();
-  }catch(err){
-    console.error(err);
-    badge.className="status err"; badge.innerHTML='<span class="pulse"></span>Could not connect — showing sample data';
-    DATA=JSON.parse(JSON.stringify(SAMPLE)); render();
-  }
+    badge.className="status ok"; badge.innerHTML='<span class="pulse"></span>Connected to Google Sheet'; render();
+  }catch(err){ console.error(err); badge.className="status err"; badge.innerHTML='<span class="pulse"></span>Could not connect — showing sample data'; DATA=JSON.parse(JSON.stringify(SAMPLE)); render(); }
 }
 
 $("modalBg").addEventListener("click",e=>{ if(e.target===$("modalBg")) closeForm(); });
-buildNav();
-showTab("overview");
-loadData();
+buildNav(); showTab("overview"); loadData();
 </script>
 </body>
 </html>
