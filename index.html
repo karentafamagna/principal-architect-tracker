@@ -69,6 +69,9 @@ tbody tr.sel{background:#eef4ff}
 .pill.amber{background:#fffbeb;color:#b45309}
 .pill.gray{background:#f1f5f9;color:#475569}
 .pill.purple{background:#f5f3ff;color:#6d28d9}
+.act{text-align:right;white-space:nowrap}
+.iconbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--brand)}
+.iconbtn:hover{background:var(--soft);border-color:var(--brand)}
 
 .progwrap{display:flex;align-items:center;gap:10px;min-width:140px}
 .progress{flex:1;height:8px;background:#e9eef6;border-radius:20px;overflow:hidden}
@@ -115,6 +118,7 @@ tbody tr.sel{background:#eef4ff}
 .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
 .field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:13.5px;background:#fbfcfe}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);background:#fff}
+.field input[readonly]{background:#f1f5f9;color:var(--muted)}
 .modal footer{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
 
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:60;box-shadow:var(--shadow)}
@@ -159,7 +163,7 @@ tbody tr.sel{background:#eef4ff}
   <div class="page active" id="page-overview">
     <div class="cards">
       <div class="card"><div class="ico">🎯</div><div class="lbl">Readiness</div><div class="metric" id="kpiReadiness">72%</div><div class="sub">Overall promotion readiness</div><div class="ring"></div></div>
-      <div class="card"><div class="ico">👥</div><div class="lbl">People Trained</div><div class="metric" id="kpiPeople">4</div><div class="sub">Across MCE + MCP</div><div class="ring"></div></div>
+      <div class="card"><div class="ico">👥</div><div class="lbl">People Trained</div><div class="metric" id="kpiPeople">4</div><div class="sub">Trained / billable only</div><div class="ring"></div></div>
       <div class="card"><div class="ico">💼</div><div class="lbl">Billable Resources</div><div class="metric" id="kpiBillable">2</div><div class="sub">Target 4</div><div class="ring"></div></div>
       <div class="card"><div class="ico">💰</div><div class="lbl">Revenue Influenced</div><div class="metric" id="kpiRevenue">$48.5K</div><div class="sub">Target $100K</div><div class="ring"></div></div>
       <div class="card"><div class="ico">⚡</div><div class="lbl">AI Hours Saved</div><div class="metric" id="kpiHours">387</div><div class="sub">Cumulative</div><div class="ring"></div></div>
@@ -167,7 +171,7 @@ tbody tr.sel{background:#eef4ff}
     </div>
     <div class="row2">
       <div class="section">
-        <h2>Promotion Scorecard</h2><p class="desc">Current progress vs. target across the five promotion criteria.</p>
+        <h2>Promotion Scorecard</h2><p class="desc">Current progress vs. target. Counts only completed work — planned / in-progress rows score 0.</p>
         <div class="chart-box"><canvas id="scorecardChart"></canvas></div>
         <table id="scorecardTable" style="margin-top:14px"></table>
       </div>
@@ -194,7 +198,7 @@ tbody tr.sel{background:#eef4ff}
   <!-- ===== MCE ===== -->
   <div class="page" id="page-mce">
     <section class="section">
-      <div class="sec-head"><div><h2>MCE Training Program</h2><p class="desc">Click a trainee to see their timeline.</p></div>
+      <div class="sec-head"><div><h2>MCE Training Program</h2><p class="desc">Click a trainee to see their timeline; use Edit to update status, projects, program or notes.</p></div>
         <button class="btn primary sm" onclick="openForm('trainee','MCE')">+ Add trainee</button></div>
       <table id="mceTable"></table>
     </section>
@@ -209,7 +213,7 @@ tbody tr.sel{background:#eef4ff}
   <!-- ===== MCP ===== -->
   <div class="page" id="page-mcp">
     <section class="section">
-      <div class="sec-head"><div><h2>MCP Training Program</h2><p class="desc">Click a trainee to see their timeline.</p></div>
+      <div class="sec-head"><div><h2>MCP Training Program</h2><p class="desc">Click a trainee to see their timeline; use Edit to update status, projects, program or notes.</p></div>
         <button class="btn primary sm" onclick="openForm('trainee','MCP')">+ Add trainee</button></div>
       <table id="mcpTable"></table>
     </section>
@@ -229,7 +233,7 @@ tbody tr.sel{background:#eef4ff}
       <table id="promptTable"></table>
     </section>
     <section class="section">
-      <h2>Hours Saved — Growth</h2><p class="desc">Cumulative hours saved as the portfolio matures.</p>
+      <h2>Hours Saved — Growth</h2><p class="desc">Cumulative hours saved, Jun–Nov. Months with no data show 0.</p>
       <div class="chart-box"><canvas id="aiGrowthChart"></canvas></div>
     </section>
     <div class="row2b">
@@ -278,8 +282,10 @@ tbody tr.sel{background:#eef4ff}
 <div class="toast" id="toast"></div>
 
 <script>
-/* CONFIG — paste your Apps Script Web App URL. See BACKEND_SETUP.md */
-const API_URL = "https://script.google.com/macros/s/AKfycby92tkowHqyUZwT_n5oFTUfsCZ8_0cwy3f3pX4v3uuG2MRbwpZ47RK4hauXH7ZAHXBN/exec";
+/* =========================================================
+   CONFIG — Apps Script Web App URL (deploy the matching APPS_SCRIPT.gs)
+========================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbw98NssB3FLT0Ea42KwIr2kqba1Q26OE3aX_hNB6L1qe0cmX4cG6L2HJEHyySUqrkzl/exec";
 const MONTHS = ["Jun","Jul","Aug","Sept","Oct","Nov"];
 
 const TABS = [
@@ -299,15 +305,18 @@ const $ = id => document.getElementById(id);
 function num(v){ return Number(String(v ?? "0").replace(/[$,%\s]/g,"")) || 0; }
 function money(v){ const n=num(v); if(!n) return "$0"; return n>=1000 ? "$"+(n/1000).toFixed(1)+"K" : "$"+n.toLocaleString(); }
 function pct(v){ const raw=String(v ?? "0"); if(raw.includes("%")) return raw; const n=num(raw); return (n<=1? Math.round(n*100):Math.round(n))+"%"; }
+function esc(s){ return String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function m3(s){ return String(s??"").trim().toLowerCase().slice(0,3); }
 function toast(msg,err){ const t=$("toast"); t.textContent=msg; t.className="toast show"+(err?" err":""); setTimeout(()=>t.className="toast",2600); }
 function statusBadge(s){ s=(s||"").toLowerCase();
-  if(s.includes("billable")||s.includes("done")||s.includes("complete")||s.includes("live")) return "green";
-  if(s.includes("progress")||s.includes("training")||s.includes("draft")||s.includes("review")) return "amber";
-  if(s.includes("plan")||s.includes("backlog")||s.includes("not")) return "gray"; return "blue"; }
+  if(s.includes("billable")||s.includes("done")||s.includes("complete")||s.includes("trained")||s.includes("live")) return "green";
+  if(s.includes("progress")||s.includes("training")||s.includes("draft")||s.includes("review")||s.includes("shadow")) return "amber";
+  if(s.includes("plan")||s.includes("backlog")||s.includes("hold")||s.includes("not")) return "gray"; return "blue"; }
 function progressCell(p){ const v=Math.max(0,Math.min(100,Math.round(num(p)<=1?num(p)*100:num(p))));
   const cls=v>=80?"green":v>=50?"amber":"red";
   return `<div class="progwrap"><div class="progress"><div class="bar ${cls}" style="width:${v}%"></div></div><span class="prog-num">${v}%</span></div>`; }
 function initials(n){ return (n||"?").split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase(); }
+function editBtn(type,row){ return `<button class="iconbtn" onclick="event.stopPropagation();openEdit('${type}',${row._cid})">✎ Edit</button>`; }
 
 function buildNav(){
   $("nav").innerHTML = TABS.map(t=>`<button data-tab="${t.id}" onclick="showTab('${t.id}')"><span class="ic">${t.ic}</span>${t.label}</button>`).join("");
@@ -322,7 +331,7 @@ function showTab(id){
   renderChartsFor(id);
 }
 
-/* ---------- sample data ---------- */
+/* ---------- sample data (offline fallback only) ---------- */
 const SAMPLE = {
   Dashboard_Metrics: [
     {Metric:"Principal Architect Readiness",["Current Value"]:72,Target:100,Unit:"%"},
@@ -336,32 +345,24 @@ const SAMPLE = {
     {Metric:"Days Remaining",["Current Value"]:180,Target:0,Unit:""}
   ],
   Trainees: [
-    {Name:"Jerry",Program:"MCE",Status:"Billable",["Current Utilization"]:62,Revenue:14200,["Active Projects"]:"Lincoln; Everest"},
-    {Name:"Alyssa",Program:"MCE",Status:"Billable",["Current Utilization"]:48,Revenue:9800,["Active Projects"]:"Covetrus"},
-    {Name:"Marcus",Program:"MCE",Status:"In Training",["Current Utilization"]:30,Revenue:4200,["Active Projects"]:"Internal"},
-    {Name:"Priya",Program:"MCP",Status:"In Training",["Current Utilization"]:25,Revenue:0,["Active Projects"]:"Shadowing Lincoln"}
+    {Name:"Jerry",Program:"MCE",Status:"Billable",["Current Utilization"]:62,Revenue:14200,["Active Projects"]:"Lincoln; Everest",Notes:""},
+    {Name:"Alyssa",Program:"MCE",Status:"Billable",["Current Utilization"]:48,Revenue:9800,["Active Projects"]:"Covetrus",Notes:""},
+    {Name:"Marcus",Program:"MCE",Status:"In Training",["Current Utilization"]:30,Revenue:4200,["Active Projects"]:"Internal",Notes:""},
+    {Name:"Priya",Program:"MCP",Status:"In Training",["Current Utilization"]:25,Revenue:0,["Active Projects"]:"Shadowing Lincoln",Notes:""}
   ],
-  /* monthly timeline per trainee: Revenue is cumulative, Utilization is the value that month */
   Trainee_Timeline: [
-    {Name:"Jerry",Month:"Jan",Revenue:1000,Utilization:20},{Name:"Jerry",Month:"Feb",Revenue:3000,Utilization:30},
-    {Name:"Jerry",Month:"Mar",Revenue:6000,Utilization:42},{Name:"Jerry",Month:"Apr",Revenue:9000,Utilization:51},
-    {Name:"Jerry",Month:"May",Revenue:11500,Utilization:58},{Name:"Jerry",Month:"Jun",Revenue:14200,Utilization:62},
-    {Name:"Alyssa",Month:"Jan",Revenue:500,Utilization:15},{Name:"Alyssa",Month:"Feb",Revenue:1500,Utilization:22},
-    {Name:"Alyssa",Month:"Mar",Revenue:3500,Utilization:30},{Name:"Alyssa",Month:"Apr",Revenue:5500,Utilization:38},
-    {Name:"Alyssa",Month:"May",Revenue:7500,Utilization:44},{Name:"Alyssa",Month:"Jun",Revenue:9800,Utilization:48},
-    {Name:"Marcus",Month:"Jan",Revenue:0,Utilization:5},{Name:"Marcus",Month:"Feb",Revenue:500,Utilization:10},
-    {Name:"Marcus",Month:"Mar",Revenue:1200,Utilization:15},{Name:"Marcus",Month:"Apr",Revenue:2200,Utilization:22},
-    {Name:"Marcus",Month:"May",Revenue:3200,Utilization:27},{Name:"Marcus",Month:"Jun",Revenue:4200,Utilization:30},
-    {Name:"Priya",Month:"Jan",Revenue:0,Utilization:5},{Name:"Priya",Month:"Feb",Revenue:0,Utilization:8},
-    {Name:"Priya",Month:"Mar",Revenue:0,Utilization:12},{Name:"Priya",Month:"Apr",Revenue:0,Utilization:18},
-    {Name:"Priya",Month:"May",Revenue:0,Utilization:22},{Name:"Priya",Month:"Jun",Revenue:0,Utilization:25}
+    {Name:"Jerry",Month:"Jun",Revenue:1000,Utilization:20},{Name:"Jerry",Month:"Jul",Revenue:3000,Utilization:30},
+    {Name:"Jerry",Month:"Aug",Revenue:6000,Utilization:42},{Name:"Jerry",Month:"Sept",Revenue:9000,Utilization:51},
+    {Name:"Jerry",Month:"Oct",Revenue:11500,Utilization:58},{Name:"Jerry",Month:"Nov",Revenue:14200,Utilization:62},
+    {Name:"Alyssa",Month:"Jun",Revenue:500,Utilization:15},{Name:"Alyssa",Month:"Jul",Revenue:1500,Utilization:22},
+    {Name:"Alyssa",Month:"Aug",Revenue:3500,Utilization:30},{Name:"Alyssa",Month:"Sept",Revenue:5500,Utilization:38},
+    {Name:"Alyssa",Month:"Oct",Revenue:7500,Utilization:44},{Name:"Alyssa",Month:"Nov",Revenue:9800,Utilization:48}
   ],
   Prompt_Portfolio: [
     {["Prompt Name"]:"Solution Design Generator",Platform:"Vulcan",Status:"Live",["Est Hours Saved / Use"]:6,Notes:"Used on 4 SOWs"},
     {["Prompt Name"]:"Architecture Review Checklist",Platform:"Claude",Status:"Live",["Est Hours Saved / Use"]:3,Notes:"Standardized reviews"},
     {["Prompt Name"]:"RFP Response Drafter",Platform:"Vulcan",Status:"Draft",["Est Hours Saved / Use"]:8,Notes:"In testing"}
   ],
-  /* each row = one project a prompt was used on, plus hours saved there */
   Prompt_Usage: [
     {["Prompt Name"]:"Solution Design Generator",Project:"Lincoln",["Hours Saved"]:18},
     {["Prompt Name"]:"Solution Design Generator",Project:"Covetrus",["Hours Saved"]:12},
@@ -373,13 +374,13 @@ const SAMPLE = {
     {["Prompt Name"]:"RFP Response Drafter",Project:"Acme",["Hours Saved"]:16}
   ],
   AI_Timeline: [
-    {Month:"Jan",["Hours Saved"]:40},{Month:"Feb",["Hours Saved"]:95},{Month:"Mar",["Hours Saved"]:150},
-    {Month:"Apr",["Hours Saved"]:230},{Month:"May",["Hours Saved"]:310},{Month:"Jun",["Hours Saved"]:387}
+    {Month:"Jun",["Hours Saved"]:120},{Month:"Jul",["Hours Saved"]:190},{Month:"Aug",["Hours Saved"]:260},
+    {Month:"Sept",["Hours Saved"]:320},{Month:"Oct",["Hours Saved"]:360},{Month:"Nov",["Hours Saved"]:387}
   ],
   Architecture_Assets: [
-    {["Asset Name"]:"Reference Integration Pattern",Category:"Pattern",Status:"Live",["Projects Using"]:"Lincoln; Covetrus",["Dollar Value"]:22000},
-    {["Asset Name"]:"Data Migration Framework",Category:"Framework",Status:"In Progress",["Projects Using"]:"Everest",["Dollar Value"]:15000},
-    {["Asset Name"]:"Security Baseline Template",Category:"Template",Status:"Live",["Projects Using"]:"Lincoln",["Dollar Value"]:11500}
+    {["Asset Name"]:"Reference Integration Pattern",Category:"Pattern",Status:"Live",["Projects Using"]:"Lincoln; Covetrus",["Dollar Value"]:22000,Notes:""},
+    {["Asset Name"]:"Data Migration Framework",Category:"Framework",Status:"In Progress",["Projects Using"]:"Everest",["Dollar Value"]:15000,Notes:""},
+    {["Asset Name"]:"Security Baseline Template",Category:"Template",Status:"Live",["Projects Using"]:"Lincoln",["Dollar Value"]:11500,Notes:""}
   ],
   Evidence_Log: [
     {Date:"2026-05-12",Category:"Revenue",["Evidence Title"]:"Closed Lincoln expansion SOW",["Metric Impact"]:"+$28K"},
@@ -387,10 +388,10 @@ const SAMPLE = {
     {Date:"2026-04-08",Category:"Innovation",["Evidence Title"]:"Shipped integration pattern asset",["Metric Impact"]:"+$22K reuse"}
   ],
   Goals: [
-    {["Goal Name"]:"4 billable resources",["Goal Type"]:"Team",Current:2,Target:4,Progress:50},
-    {["Goal Name"]:"$100K influenced revenue",["Goal Type"]:"Revenue",Current:48500,Target:100000,Progress:49},
-    {["Goal Name"]:"15 reusable AI prompts",["Goal Type"]:"AI",Current:6,Target:15,Progress:40},
-    {["Goal Name"]:"10 architecture assets",["Goal Type"]:"IP",Current:3,Target:10,Progress:30}
+    {["Goal Name"]:"4 billable resources",["Goal Type"]:"Team",Status:"On Track",Current:2,Target:4,Progress:50,Notes:""},
+    {["Goal Name"]:"$100K influenced revenue",["Goal Type"]:"Revenue",Status:"On Track",Current:48500,Target:100000,Progress:49,Notes:""},
+    {["Goal Name"]:"15 reusable AI prompts",["Goal Type"]:"AI",Status:"At Risk",Current:6,Target:15,Progress:40,Notes:""},
+    {["Goal Name"]:"10 architecture assets",["Goal Type"]:"IP",Status:"At Risk",Current:3,Target:10,Progress:30,Notes:""}
   ]
 };
 
@@ -399,14 +400,23 @@ let charts = {};
 const PALETTE=["#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b","#ef4444","#0ea5e9","#db2777"];
 function destroy(...keys){ keys.forEach(k=>{ if(charts[k]){charts[k].destroy(); charts[k]=null;} }); }
 
-/* timeline for a trainee, aligned to MONTHS; synthesizes a ramp if no rows exist */
+/* timeline for a trainee, aligned to MONTHS; synthesizes a gentle ramp if no rows exist */
 function getTL(name){
   const rows=(DATA.Trainee_Timeline||[]).filter(r=>r.Name===name);
-  if(rows.length) return MONTHS.map(mo=>{const r=rows.find(x=>x.Month===mo)||{};return {rev:num(r.Revenue),util:num(r.Utilization)};});
+  if(rows.length) return MONTHS.map(mo=>{const r=rows.find(x=>m3(x.Month)===m3(mo))||{};return {rev:num(r.Revenue),util:num(r.Utilization)};});
   const t=(DATA.Trainees||[]).find(x=>x.Name===name)||{};
   const rev=num(t.Revenue), util=num(t["Current Utilization"]);
   return MONTHS.map((mo,i)=>({rev:Math.round(rev*(i+1)/MONTHS.length),util:Math.round(util*(i+1)/MONTHS.length)}));
 }
+/* AI hours saved aligned to Jun–Nov; 0 where a month has no data (no sample fallback) */
+function aiSeries(){
+  const rows=DATA.AI_Timeline||[];
+  return MONTHS.map(mo=>{ const r=rows.find(x=>m3(x.Month)===m3(mo)); return r?num(r["Hours Saved"]):0; });
+}
+
+/* give every row a stable client id so Edit works even before _rowNumber exists */
+let _cidSeq=0;
+function tagRows(){ Object.keys(DATA).forEach(k=>{ if(Array.isArray(DATA[k])) DATA[k].forEach(r=>{ if(r && r._cid===undefined) r._cid=++_cidSeq; }); }); }
 
 /* ---------- table renderer ---------- */
 function renderTable(id, headers, rows, mapFn, emptyMsg, rowAttr){
@@ -419,17 +429,18 @@ function renderTable(id, headers, rows, mapFn, emptyMsg, rowAttr){
 
 /* ---------- render ---------- */
 function render(){
+  tagRows();
   const metrics=DATA.Dashboard_Metrics||[];
-  const m=name=>metrics.find(x=>x.Metric===name)||{}; const cur=name=>m(name)["Current Value"];
+  const m=name=>metrics.find(x=>String(x.Metric).trim()===name)||{}; const cur=name=>m(name)["Current Value"];
   $("kpiReadiness").textContent=pct(cur("Principal Architect Readiness"));
-  $("kpiPeople").textContent=(DATA.Trainees||[]).length||(cur("People Trained")??0);
+  $("kpiPeople").textContent=cur("People Trained")??0;          // from calculated Dashboard_Metrics, not raw count
   $("kpiBillable").textContent=cur("Billable Resources")??0;
   $("kpiRevenue").textContent=money(cur("Revenue Generated"));
   $("kpiHours").textContent=cur("AI Hours Saved")??0;
   $("kpiDays").textContent=cur("Days Remaining")??0;
   $("footDays").textContent=(cur("Days Remaining")??0)+" days left";
 
-  const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
+  const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(String(x.Metric).trim()));
   renderTable("scorecardTable",["Category","Current","Target","Progress"],score,x=>{
     const u=x.Unit, fmt=v=> u==="$"?money(v): u==="%"?pct(v): v;
     const prog=num(x.Target)?Math.round(num(x["Current Value"])/num(x.Target)*100):0;
@@ -437,21 +448,21 @@ function render(){
   });
 
   const tr=DATA.Trainees||[];
-  const traineeRow=t=>[t.Name,`<span class="pill ${statusBadge(t.Status)}">${t.Status||""}</span>`,progressCell(t["Current Utilization"]),money(t.Revenue),t["Active Projects"]||""];
+  const traineeRow=t=>[t.Name,`<span class="pill ${statusBadge(t.Status)}">${esc(t.Status)}</span>`,progressCell(t["Current Utilization"]),money(t.Revenue),esc(t["Active Projects"]),`<div class="act">${editBtn('trainee',t)}</div>`];
   const mceList=tr.filter(t=>t.Program==="MCE"), mcpList=tr.filter(t=>t.Program==="MCP");
-  renderTable("mceTable",["Name","Status","Utilization","Revenue","Projects"],mceList,traineeRow,"No MCE trainees yet.",
+  renderTable("mceTable",["Name","Status","Utilization","Revenue","Projects",""],mceList,traineeRow,"No MCE trainees yet.",
     t=>`class="clickable ${t.Name===selectedTrainee.MCE?'sel':''}" onclick="selectTrainee('MCE','${(t.Name||'').replace(/'/g,'')}')"`);
-  renderTable("mcpTable",["Name","Status","Utilization","Revenue","Projects"],mcpList,traineeRow,"No MCP trainees yet.",
+  renderTable("mcpTable",["Name","Status","Utilization","Revenue","Projects",""],mcpList,traineeRow,"No MCP trainees yet.",
     t=>`class="clickable ${t.Name===selectedTrainee.MCP?'sel':''}" onclick="selectTrainee('MCP','${(t.Name||'').replace(/'/g,'')}')"`);
 
-  renderTable("promptTable",["Prompt","Platform","Status","Hrs Saved / Use","Notes"],DATA.Prompt_Portfolio||[],
-    p=>[p["Prompt Name"],`<span class="pill purple">${p.Platform||""}</span>`,`<span class="pill ${statusBadge(p.Status)}">${p.Status||""}</span>`,p["Est Hours Saved / Use"]??"",p.Notes||""]);
-  renderTable("assetTable",["Asset","Category","Status","Projects","Value"],DATA.Architecture_Assets||[],
-    a=>[a["Asset Name"],`<span class="pill blue">${a.Category||""}</span>`,`<span class="pill ${statusBadge(a.Status)}">${a.Status||""}</span>`,a["Projects Using"]||"",money(a["Dollar Value"])]);
-  renderTable("evidenceTable",["Date","Category","Evidence","Impact"],DATA.Evidence_Log||[],
-    e=>[e.Date,`<span class="pill gray">${e.Category||""}</span>`,e["Evidence Title"],`<b style="color:#047857">${e["Metric Impact"]||""}</b>`]);
-  renderTable("goalTable",["Goal","Type","Current","Target","Progress"],DATA.Goals||[],
-    g=>[g["Goal Name"],`<span class="pill blue">${g["Goal Type"]||""}</span>`,g.Current,g.Target,progressCell(g.Progress)]);
+  renderTable("promptTable",["Prompt","Platform","Status","Hrs Saved / Use","Notes",""],DATA.Prompt_Portfolio||[],
+    p=>[esc(p["Prompt Name"]),`<span class="pill purple">${esc(p.Platform)}</span>`,`<span class="pill ${statusBadge(p.Status)}">${esc(p.Status)}</span>`,p["Est Hours Saved / Use"]??"",esc(p.Notes),`<div class="act">${editBtn('prompt',p)}</div>`]);
+  renderTable("assetTable",["Asset","Category","Status","Projects","Value",""],DATA.Architecture_Assets||[],
+    a=>[esc(a["Asset Name"]),`<span class="pill blue">${esc(a.Category)}</span>`,`<span class="pill ${statusBadge(a.Status)}">${esc(a.Status)}</span>`,esc(a["Projects Using"]),money(a["Dollar Value"]),`<div class="act">${editBtn('asset',a)}</div>`]);
+  renderTable("evidenceTable",["Date","Category","Evidence","Impact",""],DATA.Evidence_Log||[],
+    e=>[esc(e.Date),`<span class="pill gray">${esc(e.Category)}</span>`,esc(e["Evidence Title"]),`<b style="color:#047857">${esc(e["Metric Impact"])}</b>`,`<div class="act">${editBtn('evidence',e)}</div>`]);
+  renderTable("goalTable",["Goal","Type","Status","Current","Target","Progress",""],DATA.Goals||[],
+    g=>[esc(g["Goal Name"]),`<span class="pill blue">${esc(g["Goal Type"])}</span>`,g.Status?`<span class="pill ${statusBadge(g.Status)}">${esc(g.Status)}</span>`:"",g.Current,g.Target,progressCell(g.Progress),`<div class="act">${editBtn('goal',g)}</div>`]);
 
   renderChartsFor(currentTab);
 }
@@ -459,11 +470,8 @@ function render(){
 /* ---------- trainee selection ---------- */
 function selectTrainee(program,name){
   selectedTrainee[program]=name;
-  // update table row highlight in place (no scroll, no full re-render)
   const tableId=program==="MCE"?"mceTable":"mcpTable";
-  document.querySelectorAll(`#${tableId} tbody tr`).forEach(r=>{
-    r.classList.toggle("sel", r.textContent.trim().startsWith(name));
-  });
+  document.querySelectorAll(`#${tableId} tbody tr`).forEach(r=>{ r.classList.toggle("sel", r.textContent.trim().startsWith(name)); });
   renderTraineeSection(program);
 }
 
@@ -476,7 +484,7 @@ function renderTraineeSection(program){
   if(!list.length){ chipBox.innerHTML='<span class="empty">Add a trainee to see their timeline.</span>'; miniBox.innerHTML=""; titleEl.textContent="Trainee Timeline"; destroy(key); return; }
   if(!selectedTrainee[program]||!list.find(t=>t.Name===selectedTrainee[program])) selectedTrainee[program]=list[0].Name;
   const sel=selectedTrainee[program];
-  chipBox.innerHTML=list.map(t=>`<button class="chip ${t.Name===sel?'active':''}" onclick="selectTrainee('${program}','${(t.Name||'').replace(/'/g,'')}')"><span class="av">${initials(t.Name)}</span>${t.Name}</button>`).join("");
+  chipBox.innerHTML=list.map(t=>`<button class="chip ${t.Name===sel?'active':''}" onclick="selectTrainee('${program}','${(t.Name||'').replace(/'/g,'')}')"><span class="av">${initials(t.Name)}</span>${esc(t.Name)}</button>`).join("");
 
   const tl=getTL(sel); const t=list.find(x=>x.Name===sel)||{};
   const revGrowth=tl[tl.length-1].rev-tl[0].rev;
@@ -484,7 +492,7 @@ function renderTraineeSection(program){
     <div class="mini"><div class="l">Current Revenue</div><div class="v">${money(t.Revenue)}</div></div>
     <div class="mini"><div class="l">Revenue Growth (6mo)</div><div class="v" style="color:#047857">+${money(revGrowth)}</div></div>
     <div class="mini"><div class="l">Current Utilization</div><div class="v">${pct(t["Current Utilization"])}</div></div>
-    <div class="mini"><div class="l">Status</div><div class="v" style="font-size:15px"><span class="pill ${statusBadge(t.Status)}">${t.Status||""}</span></div></div>`;
+    <div class="mini"><div class="l">Status</div><div class="v" style="font-size:15px"><span class="pill ${statusBadge(t.Status)}">${esc(t.Status)}</span></div></div>`;
   titleEl.textContent=sel+" — Timeline";
 
   destroy(key);
@@ -504,14 +512,14 @@ function renderTraineeSection(program){
 /* ---------- charts per tab ---------- */
 function renderChartsFor(tab){
   Chart.defaults.font.family="Inter,system-ui,sans-serif"; Chart.defaults.color="#64748b";
-  const metrics=DATA.Dashboard_Metrics||[]; const m=name=>metrics.find(x=>x.Metric===name)||{};
+  const metrics=DATA.Dashboard_Metrics||[]; const m=name=>metrics.find(x=>String(x.Metric).trim()===name)||{};
 
   if(tab==="overview"){
     destroy("gauge","scorecard");
     const readiness=num(m("Principal Architect Readiness")["Current Value"]); $("gaugeNum").textContent=readiness+"%";
     charts.gauge=new Chart($("gaugeChart"),{type:"doughnut",data:{datasets:[{data:[readiness,100-readiness],backgroundColor:["#2563eb","#e9eef6"],borderWidth:0}]},
       options:{rotation:-90,circumference:180,cutout:"72%",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}}}});
-    const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
+    const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(String(x.Metric).trim()));
     charts.scorecard=new Chart($("scorecardChart"),{type:"bar",
       data:{labels:score.map(x=>x.Metric),datasets:[{label:"% to target",data:score.map(x=>num(x.Target)?Math.round(num(x["Current Value"])/num(x.Target)*100):0),backgroundColor:"#2563eb",borderRadius:6,barThickness:22}]},
       options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,scales:{x:{max:100,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"%"}},y:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+"% to target"}}}}});
@@ -528,10 +536,9 @@ function renderChartsFor(tab){
     charts.anUtil=new Chart($("anUtilChart"),{type:"line",
       data:{labels:MONTHS,datasets:tr.map((t,i)=>({label:t.Name,data:getTL(t.Name).map(x=>x.util),borderColor:PALETTE[i%PALETTE.length],backgroundColor:"transparent",tension:.35,pointRadius:3}))},
       options:lineOpts(v=>v+"%")});
-    const ai=DATA.AI_Timeline||[];
     charts.anAi=new Chart($("anAiChart"),{type:"line",
-      data:{labels:ai.map(r=>r.Month),datasets:[{label:"Hours saved (cumulative)",data:ai.map(r=>num(r["Hours Saved"])),borderColor:"#16a34a",backgroundColor:"rgba(22,163,74,.12)",fill:true,tension:.35,pointRadius:4}]},
-      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false}}}});
+      data:{labels:MONTHS,datasets:[{label:"Hours saved (cumulative)",data:aiSeries(),borderColor:"#16a34a",backgroundColor:"rgba(22,163,74,.12)",fill:true,tension:.35,pointRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false}}}});
     const as=DATA.Architecture_Assets||[];
     charts.anAsset=new Chart($("anAssetChart"),{type:"doughnut",
       data:{labels:as.map(a=>a["Asset Name"]),datasets:[{data:as.map(a=>num(a["Dollar Value"])),backgroundColor:PALETTE,borderWidth:0}]},
@@ -543,17 +550,14 @@ function renderChartsFor(tab){
 
   if(tab==="ai"){
     destroy("aiGrowth","aiProject","aiReuse");
-    const ai=DATA.AI_Timeline||[];
     charts.aiGrowth=new Chart($("aiGrowthChart"),{type:"line",
-      data:{labels:ai.map(r=>r.Month),datasets:[{label:"Hours saved (cumulative)",data:ai.map(r=>num(r["Hours Saved"])),borderColor:"#2563eb",backgroundColor:"rgba(37,99,235,.12)",fill:true,tension:.35,pointRadius:4,pointBackgroundColor:"#2563eb"}]},
-      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+" hrs saved"}}}}});
-    // hours saved by project (aggregate Prompt_Usage)
+      data:{labels:MONTHS,datasets:[{label:"Hours saved (cumulative)",data:aiSeries(),borderColor:"#2563eb",backgroundColor:"rgba(37,99,235,.12)",fill:true,tension:.35,pointRadius:4,pointBackgroundColor:"#2563eb"}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+" hrs saved"}}}}});
     const byProj={}; (DATA.Prompt_Usage||[]).forEach(u=>{ byProj[u.Project]=(byProj[u.Project]||0)+num(u["Hours Saved"]); });
     const projLabels=Object.keys(byProj).sort((a,b)=>byProj[b]-byProj[a]);
     charts.aiProject=new Chart($("aiProjectChart"),{type:"bar",
       data:{labels:projLabels,datasets:[{data:projLabels.map(p=>byProj[p]),backgroundColor:PALETTE,borderRadius:6}]},
       options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},x:{grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+" hrs saved"}}}}});
-    // reuse multiplier: distinct projects per prompt
     const byPrompt={}; (DATA.Prompt_Usage||[]).forEach(u=>{ (byPrompt[u["Prompt Name"]]=byPrompt[u["Prompt Name"]]||new Set()).add(u.Project); });
     const pLabels=Object.keys(byPrompt);
     charts.aiReuse=new Chart($("aiReuseChart"),{type:"bar",
@@ -562,71 +566,137 @@ function renderChartsFor(tab){
   }
 }
 
-/* ---------- forms ---------- */
+/* ---------- forms (add + edit) ---------- */
 const FORMS = {
-  trainee:{ title:"Add Trainee", sheet:"Trainees", fields:[
-    {k:"Name",label:"Name",type:"text",req:true},
-    {k:"Program",label:"Program",type:"select",opts:["MCE","MCP"]},
-    {k:"Status",label:"Status",type:"select",opts:["In Training","Billable","Shadowing","On Hold"]},
-    {k:"Current Utilization",label:"Utilization %",type:"number"},
-    {k:"Revenue",label:"Revenue influenced ($)",type:"number"},
-    {k:"Active Projects",label:"Active projects",type:"text"}
-  ]},
-  prompt:{ title:"Add AI Prompt", sheet:"Prompt_Portfolio", fields:[
-    {k:"Prompt Name",label:"Prompt name",type:"text",req:true},
-    {k:"Platform",label:"Platform",type:"select",opts:["Vulcan","Claude","ChatGPT","Other"]},
-    {k:"Status",label:"Status",type:"select",opts:["Draft","In Review","Live","Retired"]},
-    {k:"Est Hours Saved / Use",label:"Est. hours saved / use",type:"number"},
-    {k:"Notes",label:"Notes",type:"textarea"}
-  ]},
-  asset:{ title:"Add Architecture Asset", sheet:"Architecture_Assets", fields:[
-    {k:"Asset Name",label:"Asset name",type:"text",req:true},
-    {k:"Category",label:"Category",type:"select",opts:["Pattern","Framework","Template","Tool","Reference"]},
-    {k:"Status",label:"Status",type:"select",opts:["Planned","In Progress","Live"]},
-    {k:"Projects Using",label:"Projects using",type:"text"},
-    {k:"Dollar Value",label:"Dollar value ($)",type:"number"}
-  ]},
-  evidence:{ title:"Log Evidence", sheet:"Evidence_Log", fields:[
-    {k:"Date",label:"Date",type:"date",req:true},
-    {k:"Category",label:"Category",type:"select",opts:["Revenue","Mentorship","Innovation","Delivery","Leadership"]},
-    {k:"Evidence Title",label:"What happened",type:"text",req:true},
-    {k:"Metric Impact",label:"Measurable impact",type:"text"}
-  ]},
-  goal:{ title:"Add Goal", sheet:"Goals", fields:[
-    {k:"Goal Name",label:"Goal",type:"text",req:true},
-    {k:"Goal Type",label:"Type",type:"select",opts:["Team","Revenue","AI","IP","Personal"]},
-    {k:"Current",label:"Current value",type:"number"},
-    {k:"Target",label:"Target value",type:"number"}
-  ]}
+  trainee:{ label:"Trainee", title:"Add Trainee", sheet:"Trainees",
+    edit:["Program","Status","Active Projects","Notes"],
+    fields:[
+      {k:"Name",label:"Name",type:"text",req:true},
+      {k:"Program",label:"Program",type:"select",opts:["MCE","MCP"]},
+      {k:"Status",label:"Status",type:"select",opts:["In Training","Shadowing","Billable","Trained","Completed","On Hold"]},
+      {k:"Current Utilization",label:"Utilization %",type:"number"},
+      {k:"Revenue",label:"Revenue influenced ($)",type:"number"},
+      {k:"Active Projects",label:"Active projects",type:"text"},
+      {k:"Notes",label:"Notes",type:"textarea"}
+    ]},
+  prompt:{ label:"AI Prompt", title:"Add AI Prompt", sheet:"Prompt_Portfolio",
+    edit:["Platform","Status","Est Hours Saved / Use","Notes"],
+    fields:[
+      {k:"Prompt Name",label:"Prompt name",type:"text",req:true},
+      {k:"Platform",label:"Platform",type:"select",opts:["Vulcan","Claude","ChatGPT","Other"]},
+      {k:"Status",label:"Status",type:"select",opts:["Draft","In Review","Live","Completed","Retired"]},
+      {k:"Est Hours Saved / Use",label:"Est. hours saved / use",type:"number"},
+      {k:"Notes",label:"Notes",type:"textarea"}
+    ]},
+  asset:{ label:"Architecture Asset", title:"Add Architecture Asset", sheet:"Architecture_Assets",
+    edit:["Status","Projects Using","Dollar Value","Notes"],
+    fields:[
+      {k:"Asset Name",label:"Asset name",type:"text",req:true},
+      {k:"Category",label:"Category",type:"select",opts:["Pattern","Framework","Template","Tool","Reference"]},
+      {k:"Status",label:"Status",type:"select",opts:["Planned","In Progress","Live","Completed"]},
+      {k:"Projects Using",label:"Projects using",type:"text"},
+      {k:"Dollar Value",label:"Dollar value ($)",type:"number"},
+      {k:"Notes",label:"Notes",type:"textarea"}
+    ]},
+  evidence:{ label:"Evidence", title:"Log Evidence", sheet:"Evidence_Log",
+    edit:["Date","Category","Evidence Title","Metric Impact"],
+    fields:[
+      {k:"Date",label:"Date",type:"date",req:true},
+      {k:"Category",label:"Category",type:"select",opts:["Revenue","Mentorship","Innovation","Delivery","Leadership"]},
+      {k:"Evidence Title",label:"What happened",type:"text",req:true},
+      {k:"Metric Impact",label:"Measurable impact",type:"text"}
+    ]},
+  goal:{ label:"Goal", title:"Add Goal", sheet:"Goals",
+    edit:["Goal Name","Goal Type","Status","Current","Target","Progress","Notes"],
+    fields:[
+      {k:"Goal Name",label:"Goal",type:"text",req:true},
+      {k:"Goal Type",label:"Type",type:"select",opts:["Team","Revenue","AI","IP","Personal"]},
+      {k:"Status",label:"Status",type:"select",opts:["On Track","At Risk","Blocked","Done"]},
+      {k:"Current",label:"Current value",type:"number"},
+      {k:"Target",label:"Target value",type:"number"},
+      {k:"Progress",label:"Progress % (blank = auto from current/target)",type:"number"},
+      {k:"Notes",label:"Notes",type:"textarea"}
+    ]}
 };
-let activeForm=null, presetProgram=null;
-function openForm(type,preset){
-  activeForm=type; presetProgram=preset||null; const f=FORMS[type];
-  $("modalTitle").textContent=f.title;
-  $("modalSub").textContent=(API_URL.includes("PASTE_YOUR")?"Demo mode — saved to this view only":"Saves to your Google Sheet");
-  $("modalBody").innerHTML=f.fields.map(fl=>{
-    const val=(fl.k==="Program"&&preset)?preset:"";
-    if(fl.type==="select") return `<div class="field"><label>${fl.label}</label><select data-k="${fl.k}">${fl.opts.map(o=>`<option ${o===val?"selected":""}>${o}</option>`).join("")}</select></div>`;
-    if(fl.type==="textarea") return `<div class="field"><label>${fl.label}</label><textarea data-k="${fl.k}" rows="2"></textarea></div>`;
-    return `<div class="field"><label>${fl.label}${fl.req?" *":""}</label><input data-k="${fl.k}" type="${fl.type}" value="${val}"></div>`;
+
+let activeForm=null, presetProgram=null, editingRowNumber=null, editingRec=null;
+
+function buildFields(defs, values){
+  return defs.map(fl=>{
+    let val = values && values[fl.k]!==undefined && values[fl.k]!==null ? values[fl.k]
+            : (fl.k==="Program" && presetProgram ? presetProgram : "");
+    if(fl.type==="select"){
+      const opts=fl.opts.slice();
+      if(val!=="" && !opts.map(String).includes(String(val))) opts.unshift(val);
+      return `<div class="field"><label>${fl.label}</label><select data-k="${esc(fl.k)}">${opts.map(o=>`<option ${String(o)===String(val)?"selected":""}>${esc(o)}</option>`).join("")}</select></div>`;
+    }
+    if(fl.type==="textarea") return `<div class="field"><label>${fl.label}</label><textarea data-k="${esc(fl.k)}" rows="2">${esc(val)}</textarea></div>`;
+    return `<div class="field"><label>${fl.label}${fl.req?" *":""}</label><input data-k="${esc(fl.k)}" type="${fl.type}" value="${esc(val)}"></div>`;
   }).join("");
+}
+
+function openForm(type,preset){
+  activeForm=type; presetProgram=preset||null; editingRowNumber=null; editingRec=null;
+  const f=FORMS[type];
+  $("modalTitle").textContent=f.title;
+  $("modalSub").textContent="Adds a new row to your Google Sheet";
+  $("modalBody").innerHTML=buildFields(f.fields,{});
+  $("modalSave").textContent="Save entry";
   $("modalBg").classList.add("show");
 }
-function closeForm(){ $("modalBg").classList.remove("show"); activeForm=null; }
+
+function openEdit(type,cid){
+  const f=FORMS[type];
+  const rec=(DATA[f.sheet]||[]).find(r=>String(r._cid)===String(cid));
+  if(!rec){ toast("Row not found — hit Refresh and retry",true); return; }
+  activeForm=type; presetProgram=null; editingRec=rec;
+  editingRowNumber = (rec._rowNumber!=null && rec._rowNumber!=="") ? rec._rowNumber : null;
+  const defs=f.fields.filter(x=>(f.edit||f.fields.map(z=>z.k)).includes(x.k));
+  $("modalTitle").textContent="Edit "+f.label;
+  $("modalSub").textContent = editingRowNumber!=null
+    ? "Updates row "+editingRowNumber+" in your Google Sheet"
+    : "Editing locally — deploy the updated Apps Script so edits save to the Sheet";
+  $("modalBody").innerHTML=buildFields(defs,rec);
+  $("modalSave").textContent="Save changes";
+  $("modalBg").classList.add("show");
+}
+
+function closeForm(){ $("modalBg").classList.remove("show"); activeForm=null; editingRowNumber=null; editingRec=null; }
+
 async function submitForm(){
   const f=FORMS[activeForm]; const row={}; let missing=false;
   $("modalBody").querySelectorAll("[data-k]").forEach(el=>{ row[el.dataset.k]=el.value;
-    const fl=f.fields.find(x=>x.k===el.dataset.k); if(fl&&fl.req&&!el.value.trim()) missing=true; });
+    const fl=f.fields.find(x=>x.k===el.dataset.k); if(fl&&fl.req&&!String(el.value).trim()) missing=true; });
   if(missing){ toast("Fill in required fields",true); return; }
   if(presetProgram&&!row.Program) row.Program=presetProgram;
-  if(activeForm==="goal"&&num(row.Target)) row.Progress=Math.round(num(row.Current)/num(row.Target)*100);
+  if(activeForm==="goal"){ if((row.Progress===""||row.Progress===undefined)&&num(row.Target)) row.Progress=Math.round(num(row.Current)/num(row.Target)*100); }
+
+  const editing = editingRec!=null;
   $("modalSave").textContent="Saving…"; $("modalSave").disabled=true;
-  (DATA[f.sheet]=DATA[f.sheet]||[]).unshift(row);
-  if(!API_URL.includes("PASTE_YOUR")){
-    try{ await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"add",sheet:f.sheet,row})}); toast("Saved to Google Sheet ✓"); }
-    catch(e){ toast("Saved locally — sync failed",true); }
-  } else toast("Added (demo mode) ✓");
-  $("modalSave").textContent="Save entry"; $("modalSave").disabled=false; closeForm(); render();
+
+  if(editing){
+    Object.assign(editingRec,row);               // optimistic local update (keeps _cid / _rowNumber)
+  } else {
+    (DATA[f.sheet]=DATA[f.sheet]||[]).unshift(row);
+  }
+
+  if(API_URL.includes("PASTE_YOUR")){
+    toast(editing?"Updated (demo mode) ✓":"Added (demo mode) ✓");
+  } else if(editing && editingRowNumber==null){
+    // old Apps Script (no _rowNumber) — can't target the sheet row yet
+    toast("Edited locally. Deploy the updated Apps Script to save edits to the Sheet.",true);
+  } else {
+    try{
+      const body = editing
+        ? {action:"update", sheet:f.sheet, rowNumber:editingRowNumber, row}
+        : {action:"add",    sheet:f.sheet, row};
+      const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});
+      try{ const j=await res.json(); if(!editing && j && j.rowNumber){ row._rowNumber=j.rowNumber; } }catch(_){}
+      toast(editing?"Updated Google Sheet ✓":"Saved to Google Sheet ✓");
+    }catch(e){ toast("Saved locally — sync failed",true); }
+  }
+
+  $("modalSave").disabled=false; closeForm(); render();
 }
 
 /* ---------- load ---------- */
@@ -638,7 +708,8 @@ async function loadData(){
     DATA={
       Dashboard_Metrics:d.Dashboard_Metrics||SAMPLE.Dashboard_Metrics,
       Trainees:d.Trainees||[], Trainee_Timeline:d.Trainee_Timeline||[],
-      Prompt_Portfolio:d.Prompt_Portfolio||[], Prompt_Usage:d.Prompt_Usage||[], AI_Timeline:d.AI_Timeline||SAMPLE.AI_Timeline,
+      Prompt_Portfolio:d.Prompt_Portfolio||[], Prompt_Usage:d.Prompt_Usage||[],
+      AI_Timeline:d.AI_Timeline||[],                                  // no sample fallback — empty months read as 0
       Architecture_Assets:d.Architecture_Assets||[], Evidence_Log:d.Evidence_Log||[], Goals:d.Goals||[]
     };
     badge.className="status ok"; badge.innerHTML='<span class="pulse"></span>Connected to Google Sheet'; render();
