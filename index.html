@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Principal Architect Evidence Tracker</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f8fc;color:#172033} .layout{display:flex;min-height:100vh}.sidebar{width:260px;background:#fff;border-right:1px solid #e5e7eb;padding:22px;position:fixed;top:0;bottom:0;left:0}.sidebar h2{margin:0 0 18px}.sidebar a{display:block;padding:10px 12px;border-radius:10px;margin:6px 0;text-decoration:none;color:#172033;background:#f8fafc}.main{margin-left:260px;padding:28px;width:calc(100% - 260px)}.badge{display:inline-block;background:#eef2ff;color:#1e3a8a;padding:6px 10px;border-radius:999px;font-size:12px;margin-bottom:14px}.cards{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:14px}.card,.section{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 5px rgba(0,0,0,.05)}.card{padding:18px}.label{color:#64748b;font-size:13px}.metric{font-size:30px;font-weight:800;margin-top:7px}.section{padding:22px;margin-top:22px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}table{width:100%;border-collapse:collapse}th,td{padding:11px 10px;border-bottom:1px solid #eef2f7;text-align:left;vertical-align:top}th{font-size:12px;text-transform:uppercase;color:#64748b}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px}.progress{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar{height:100%;background:#2563eb;border-radius:999px}.empty{color:#94a3b8}.small{font-size:13px;color:#64748b}@media(max-width:1000px){.sidebar{display:none}.main{margin-left:0;width:100%}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>PA Tracker</h2>
+      <a href="#overview">Overview</a>
+      <a href="#mce">MCE Training</a>
+      <a href="#mcp">MCP Training</a>
+      <a href="#ai">AI / Vulcan</a>
+      <a href="#assets">Architecture Assets</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#goals">Goals</a>
+    </aside>
+
+    <main class="main">
+      <section id="overview">
+        <h1>Principal Architect Evidence Tracker</h1>
+        <div class="badge" id="connectionStatus">Using sample data</div>
+        <div class="cards">
+          <div class="card"><div class="label">Readiness</div><div class="metric" id="kpiReadiness">72%</div></div>
+          <div class="card"><div class="label">People Trained</div><div class="metric" id="kpiPeople">4</div></div>
+          <div class="card"><div class="label">Billable Resources</div><div class="metric" id="kpiBillable">2</div></div>
+          <div class="card"><div class="label">Revenue Influenced</div><div class="metric" id="kpiRevenue">$48.5K</div></div>
+          <div class="card"><div class="label">AI Hours Saved</div><div class="metric" id="kpiHours">387</div></div>
+          <div class="card"><div class="label">Days Remaining</div><div class="metric" id="kpiDays">180</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Promotion Scorecard</h2>
+        <table id="scorecardTable"><tr><th>Category</th><th>Current</th><th>Target</th><th>Progress</th></tr></table>
+      </section>
+
+      <section class="section" id="mce">
+        <h2>MCE Training Program</h2>
+        <p class="small">Track trainees, utilization, projects, billability, and revenue contribution.</p>
+        <table id="mceTable"><tr><th>Name</th><th>Status</th><th>Utilization</th><th>Projects</th><th>Notes</th></tr></table>
+      </section>
+
+      <section class="section" id="mcp">
+        <h2>MCP Training Program</h2>
+        <p class="small">Same framework as MCE so you can prove the training program is repeatable.</p>
+        <table id="mcpTable"><tr><th>Name</th><th>Status</th><th>Utilization</th><th>Projects</th><th>Notes</th></tr></table>
+      </section>
+
+      <section class="section" id="ai">
+        <h2>AI / Vulcan Prompt Portfolio</h2>
+        <table id="promptTable"><tr><th>Prompt</th><th>Platform</th><th>Status</th><th>Hours / Use</th><th>Notes</th></tr></table>
+      </section>
+
+      <section class="section" id="assets">
+        <h2>Architecture Assets</h2>
+        <table id="assetTable"><tr><th>Asset</th><th>Category</th><th>Status</th><th>Projects</th><th>Value</th></tr></table>
+      </section>
+
+      <section class="section" id="evidence">
+        <h2>Principal Architect Evidence</h2>
+        <table id="evidenceTable"><tr><th>Date</th><th>Category</th><th>Evidence</th><th>Impact</th></tr></table>
+      </section>
+
+      <section class="section" id="goals">
+        <h2>Goals</h2>
+        <table id="goalTable"><tr><th>Goal</th><th>Type</th><th>Current</th><th>Target</th><th>Progress</th></tr></table>
+      </section>
+    </main>
+  </div>
+
+<script>
+/* Paste your Apps Script Web App URL here after deployment. */
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+const sample = {
+  Dashboard_Metrics:[
+    {Metric:"Principal Architect Readiness","Current Value":"72%",Target:"100%",Unit:"%"},
+    {Metric:"People Trained","Current Value":"4",Target:"6",Unit:"count"},
+    {Metric:"Billable Resources","Current Value":"2",Target:"4",Unit:"count"},
+    {Metric:"Average Utilization","Current Value":"62%",Target:"70%",Unit:"%"},
+    {Metric:"Revenue Influenced","Current Value":"48500",Target:"100000",Unit:"$"},
+    {Metric:"AI Hours Saved","Current Value":"387",Target:"750",Unit:"hours"},
+    {Metric:"AI Prompts Created","Current Value":"0",Target:"15",Unit:"count"},
+    {Metric:"Architecture Assets Created","Current Value":"3",Target:"10",Unit:"count"},
+    {Metric:"Days Remaining","Current Value":"180",Target:"0",Unit:"days"}
+  ],
+  Trainees:[
+    {Name:"Jerry",Program:"MCE",Status:"Billable","Current Utilization":"62%","Active Projects":"Lincoln; Everest",Notes:"Actively billable."},
+    {Name:"Alyssa",Program:"MCE",Status:"Billable","Current Utilization":"48%","Active Projects":"Covetrus",Notes:"Training on MC tasks."}
+  ],
+  Prompt_Portfolio:[
+    {"Prompt Name":"Landing Page Generator",Platform:"MCE",Status:"Planned","Est Hours Saved / Use":"10",Notes:"Landing page creator with AMPscript capability."},
+    {"Prompt Name":"SQL Generator",Platform:"MCE",Status:"Planned","Est Hours Saved / Use":"5",Notes:"SQL query generator."},
+    {"Prompt Name":"ERD Diagram Creator",Platform:"Data Cloud",Status:"Planned","Est Hours Saved / Use":"10",Notes:"ERD diagram creator."},
+    {"Prompt Name":"Sitemap Creator",Platform:"MCP",Status:"Planned","Est Hours Saved / Use":"8",Notes:"Sitemap generation."}
+  ],
+  Architecture_Assets:[
+    {"Asset Name":"MCE Training Program",Category:"Training",Status:"Live","Projects Using":"15","Dollar Value":"27000"},
+    {"Asset Name":"QA Framework",Category:"Delivery Standard",Status:"In Progress","Projects Using":"11","Dollar Value":"18000"}
+  ],
+  Evidence_Log:[
+    {Date:"2026-07-15",Category:"Training","Evidence Title":"Jerry became billable","Metric Impact":"Billable resource created"},
+    {Date:"2026-08-01",Category:"AI","Evidence Title":"Landing Page Generator prototype","Metric Impact":"10 hours saved/use target"}
+  ],
+  Goals:[
+    {"Goal Name":"Move 2 MCE trainees to 70% utilization","Goal Type":"Training",Current:"55%",Target:"70%",Progress:"79%"},
+    {"Goal Name":"Create 15 AI/Vulcan prompts","Goal Type":"AI",Current:"0",Target:"15",Progress:"0%"}
+  ]
+};
+
+function cleanNum(v){return Number(String(v||"0").replace(/[$,% ,]/g,""))||0}
+function money(v){const n=cleanNum(v);return n>=1000?"$"+(n/1000).toFixed(1)+"K":"$"+n.toLocaleString()}
+function pct(v){const s=String(v||"0");if(s.includes("%"))return s;const n=Number(s)||0;return n<=1?Math.round(n*100)+"%":Math.round(n)+"%"}
+function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
+function rows(tableId,headers,data,map){const t=document.getElementById(tableId);t.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>"; if(!data.length){t.innerHTML+=`<tr><td colspan="${headers.length}" class="empty">No rows yet.</td></tr>`;return} data.forEach(r=>{t.innerHTML+="<tr>"+map(r).map(v=>`<td>${v??""}</td>`).join("")+"</tr>"})}
+function render(data){
+ const metrics=data.Dashboard_Metrics||[]; const get=n=>metrics.find(m=>m.Metric===n)?.["Current Value"];
+ setText("kpiReadiness",pct(get("Principal Architect Readiness"))); setText("kpiPeople",get("People Trained")||0); setText("kpiBillable",get("Billable Resources")||0); setText("kpiRevenue",money(get("Revenue Influenced"))); setText("kpiHours",get("AI Hours Saved")||0); setText("kpiDays",get("Days Remaining")||0);
+ rows("scorecardTable",["Category","Current","Target","Progress"],metrics.filter(m=>!["Principal Architect Readiness","Days Remaining"].includes(m.Metric)),m=>[m.Metric,m.Unit==="$"?money(m["Current Value"]):m.Unit==="%"?pct(m["Current Value"]):m["Current Value"],m.Unit==="$"?money(m.Target):m.Unit==="%"?pct(m.Target):m.Target,m.Target?pct(cleanNum(m["Current Value"])/cleanNum(m.Target)):""]);
+ const trainees=data.Trainees||[];
+ rows("mceTable",["Name","Status","Utilization","Projects","Notes"],trainees.filter(t=>t.Program==="MCE"),t=>[t.Name,t.Status,pct(t["Current Utilization"]),t["Active Projects"],t.Notes]);
+ rows("mcpTable",["Name","Status","Utilization","Projects","Notes"],trainees.filter(t=>t.Program==="MCP"),t=>[t.Name,t.Status,pct(t["Current Utilization"]),t["Active Projects"],t.Notes]);
+ rows("promptTable",["Prompt","Platform","Status","Hours / Use","Notes"],data.Prompt_Portfolio||[],p=>[p["Prompt Name"],p.Platform,p.Status,p["Est Hours Saved / Use"],p.Notes]);
+ rows("assetTable",["Asset","Category","Status","Projects","Value"],data.Architecture_Assets||[],a=>[a["Asset Name"],a.Category,a.Status,a["Projects Using"],money(a["Dollar Value"])]);
+ rows("evidenceTable",["Date","Category","Evidence","Impact"],data.Evidence_Log||[],e=>[e.Date,e.Category,e["Evidence Title"],e["Metric Impact"]]);
+ rows("goalTable",["Goal","Type","Current","Target","Progress"],data.Goals||[],g=>[g["Goal Name"],g["Goal Type"],g.Current,g.Target,pct(g.Progress)]);
+}
+async function load(){
+ if(!API_URL || API_URL.includes("PASTE_YOUR")){render(sample);return}
+ try{const res=await fetch(API_URL+"?action=getAll");const json=await res.json();document.getElementById("connectionStatus").textContent="Connected to Google Sheet";render(json.data||sample)}
+ catch(e){document.getElementById("connectionStatus").textContent="Could not connect to Google Sheet";render(sample)}
+}
+load();
+</script>
+</body>
+</html>
