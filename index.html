@@ -1,142 +1,611 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Principal Architect Evidence Tracker</title>
-  <style>
-    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f8fc;color:#172033} .layout{display:flex;min-height:100vh}.sidebar{width:260px;background:#fff;border-right:1px solid #e5e7eb;padding:22px;position:fixed;top:0;bottom:0;left:0}.sidebar h2{margin:0 0 18px}.sidebar a{display:block;padding:10px 12px;border-radius:10px;margin:6px 0;text-decoration:none;color:#172033;background:#f8fafc}.main{margin-left:260px;padding:28px;width:calc(100% - 260px)}.badge{display:inline-block;background:#eef2ff;color:#1e3a8a;padding:6px 10px;border-radius:999px;font-size:12px;margin-bottom:14px}.cards{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:14px}.card,.section{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 5px rgba(0,0,0,.05)}.card{padding:18px}.label{color:#64748b;font-size:13px}.metric{font-size:30px;font-weight:800;margin-top:7px}.section{padding:22px;margin-top:22px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}table{width:100%;border-collapse:collapse}th,td{padding:11px 10px;border-bottom:1px solid #eef2f7;text-align:left;vertical-align:top}th{font-size:12px;text-transform:uppercase;color:#64748b}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:12px}.progress{height:9px;background:#e5e7eb;border-radius:999px;overflow:hidden}.bar{height:100%;background:#2563eb;border-radius:999px}.empty{color:#94a3b8}.small{font-size:13px;color:#64748b}@media(max-width:1000px){.sidebar{display:none}.main{margin-left:0;width:100%}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Principal Architect Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0f1729; --panel:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e8edf5;
+  --brand:#2563eb; --brand2:#7c3aed; --green:#16a34a; --amber:#f59e0b; --red:#ef4444;
+  --soft:#f1f5fb; --shadow:0 10px 30px -12px rgba(15,23,42,.18);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#eef2f9;color:var(--ink)}
+
+/* sidebar */
+.sidebar{position:fixed;left:0;top:0;width:240px;height:100%;background:var(--bg);color:#cbd5e1;padding:22px 16px;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;margin:4px 6px 22px}
+.brand .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+.brand h2{font-size:16px;margin:0;color:#fff;line-height:1.1}
+.brand small{color:#93a4bd;font-size:11px}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:11px 12px;border-radius:10px;margin:3px 0;color:#cbd5e1;background:none;border:none;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav button.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.nav .ic{width:20px;text-align:center;font-size:15px}
+.sidebar .foot{margin-top:18px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px;color:#93a4bd}
+
+/* main */
+.main{margin-left:240px;padding:26px 30px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.topbar h1{font-size:22px;margin:0}
+.topbar p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.status{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:600;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.status .pulse{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.status.ok{background:#ecfdf5;color:#065f46;border-color:#a7f3d0}
+.status.ok .pulse{background:var(--green)}
+.status.err{background:#fef2f2;color:#991b1b;border-color:#fecaca}
+.status.err .pulse{background:var(--red)}
+
+/* pages */
+.page{display:none;animation:fade .25s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* KPI cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--panel);padding:18px;border-radius:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+.card .metric{font-size:32px;font-weight:800;margin-top:8px;line-height:1}
+.card .sub{font-size:11px;color:var(--muted);margin-top:6px}
+.card .ico{position:absolute;right:16px;top:16px;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--soft)}
+.card .ring{position:absolute;right:-30px;bottom:-30px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.10),transparent 70%)}
+
+/* sections */
+.section{background:var(--panel);margin-top:18px;padding:20px 22px;border-radius:16px;box-shadow:var(--shadow)}
+.section h2{font-size:16px;margin:0 0 2px}
+.section .desc{color:var(--muted);font-size:12.5px;margin:0 0 14px}
+.row2{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.row2b{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.sec-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sec-head .desc{margin:0}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{padding:10px;text-align:left;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--soft)}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600}
+.pill.green{background:#ecfdf5;color:#047857}
+.pill.blue{background:#eff6ff;color:#1d4ed8}
+.pill.amber{background:#fffbeb;color:#b45309}
+.pill.gray{background:#f1f5f9;color:#475569}
+.pill.purple{background:#f5f3ff;color:#6d28d9}
+
+/* progress */
+.progwrap{display:flex;align-items:center;gap:10px;min-width:140px}
+.progress{flex:1;height:8px;background:#e9eef6;border-radius:20px;overflow:hidden}
+.bar{height:8px;border-radius:20px;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0;transition:width .9s ease}
+.bar.green{background:linear-gradient(90deg,#22c55e,#16a34a)}
+.bar.amber{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.bar.red{background:linear-gradient(90deg,#f87171,#ef4444)}
+.prog-num{font-size:12px;font-weight:700;width:38px;text-align:right}
+
+/* charts */
+.chart-box{position:relative;height:260px}
+.chart-box.sm{height:230px}
+.gauge-center{position:absolute;top:54%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.gauge-center .g-num{font-size:34px;font-weight:800}
+.gauge-center .g-lbl{font-size:11px;color:var(--muted);font-weight:600}
+
+/* buttons / forms */
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:600;border-radius:10px;padding:9px 14px;font-size:13px;display:inline-flex;align-items:center;gap:7px}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.ghost:hover{background:#e2e9f4}
+.btn.sm{padding:7px 11px;font-size:12px}
+
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:18px;width:100%;max-width:460px;box-shadow:0 30px 70px -20px rgba(0,0,0,.4);overflow:hidden;animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(8px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal header{padding:18px 22px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.modal header h3{margin:0;font-size:17px}
+.modal header p{margin:3px 0 0;font-size:12.5px;opacity:.9}
+.modal .body{padding:20px 22px;max-height:60vh;overflow:auto}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:13.5px;background:#fbfcfe}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);background:#fff}
+.modal footer{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:60;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+.empty{color:var(--muted);font-size:13px;padding:14px 10px}
+
+/* mobile top tabs */
+.mtabs{display:none}
+@media(max-width:900px){.row2,.row2b{grid-template-columns:1fr}}
+@media(max-width:760px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .main{margin-left:0;padding:16px}
+  .sidebar{display:none}
+  .mtabs{display:flex;gap:6px;overflow:auto;padding-bottom:8px;margin-bottom:6px}
+  .mtabs button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
+  .mtabs button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+}
+</style>
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <h2>PA Tracker</h2>
-      <a href="#overview">Overview</a>
-      <a href="#mce">MCE Training</a>
-      <a href="#mcp">MCP Training</a>
-      <a href="#ai">AI / Vulcan</a>
-      <a href="#assets">Architecture Assets</a>
-      <a href="#evidence">Evidence</a>
-      <a href="#goals">Goals</a>
-    </aside>
 
-    <main class="main">
-      <section id="overview">
-        <h1>Principal Architect Evidence Tracker</h1>
-        <div class="badge" id="connectionStatus">Using sample data</div>
-        <div class="cards">
-          <div class="card"><div class="label">Readiness</div><div class="metric" id="kpiReadiness">72%</div></div>
-          <div class="card"><div class="label">People Trained</div><div class="metric" id="kpiPeople">4</div></div>
-          <div class="card"><div class="label">Billable Resources</div><div class="metric" id="kpiBillable">2</div></div>
-          <div class="card"><div class="label">Revenue Influenced</div><div class="metric" id="kpiRevenue">$48.5K</div></div>
-          <div class="card"><div class="label">AI Hours Saved</div><div class="metric" id="kpiHours">387</div></div>
-          <div class="card"><div class="label">Days Remaining</div><div class="metric" id="kpiDays">180</div></div>
-        </div>
-      </section>
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo">PA</div>
+    <div><h2>PA Tracker</h2><small>Promotion Evidence</small></div>
+  </div>
+  <nav class="nav" id="nav"></nav>
+  <div class="foot">Promotion target window<br><b id="footDays" style="color:#fff;font-size:14px">180 days left</b></div>
+</aside>
 
-      <section class="section">
-        <h2>Promotion Scorecard</h2>
-        <table id="scorecardTable"><tr><th>Category</th><th>Current</th><th>Target</th><th>Progress</th></tr></table>
-      </section>
-
-      <section class="section" id="mce">
-        <h2>MCE Training Program</h2>
-        <p class="small">Track trainees, utilization, projects, billability, and revenue contribution.</p>
-        <table id="mceTable"><tr><th>Name</th><th>Status</th><th>Utilization</th><th>Projects</th><th>Notes</th></tr></table>
-      </section>
-
-      <section class="section" id="mcp">
-        <h2>MCP Training Program</h2>
-        <p class="small">Same framework as MCE so you can prove the training program is repeatable.</p>
-        <table id="mcpTable"><tr><th>Name</th><th>Status</th><th>Utilization</th><th>Projects</th><th>Notes</th></tr></table>
-      </section>
-
-      <section class="section" id="ai">
-        <h2>AI / Vulcan Prompt Portfolio</h2>
-        <table id="promptTable"><tr><th>Prompt</th><th>Platform</th><th>Status</th><th>Hours / Use</th><th>Notes</th></tr></table>
-      </section>
-
-      <section class="section" id="assets">
-        <h2>Architecture Assets</h2>
-        <table id="assetTable"><tr><th>Asset</th><th>Category</th><th>Status</th><th>Projects</th><th>Value</th></tr></table>
-      </section>
-
-      <section class="section" id="evidence">
-        <h2>Principal Architect Evidence</h2>
-        <table id="evidenceTable"><tr><th>Date</th><th>Category</th><th>Evidence</th><th>Impact</th></tr></table>
-      </section>
-
-      <section class="section" id="goals">
-        <h2>Goals</h2>
-        <table id="goalTable"><tr><th>Goal</th><th>Type</th><th>Current</th><th>Target</th><th>Progress</th></tr></table>
-      </section>
-    </main>
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1 id="pageTitle">Overview</h1>
+      <p id="pageDesc">Your promotion readiness at a glance.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span class="status" id="connectionStatus"><span class="pulse"></span>Using sample data</span>
+      <button class="btn ghost sm" onclick="loadData()">↻ Refresh</button>
+    </div>
   </div>
 
-<script>
-/* Paste your Apps Script Web App URL here after deployment. */
-const API_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  <!-- mobile tab strip -->
+  <div class="mtabs" id="mtabs"></div>
 
-const sample = {
-  Dashboard_Metrics:[
-    {Metric:"Principal Architect Readiness","Current Value":"72%",Target:"100%",Unit:"%"},
-    {Metric:"People Trained","Current Value":"4",Target:"6",Unit:"count"},
-    {Metric:"Billable Resources","Current Value":"2",Target:"4",Unit:"count"},
-    {Metric:"Average Utilization","Current Value":"62%",Target:"70%",Unit:"%"},
-    {Metric:"Revenue Influenced","Current Value":"48500",Target:"100000",Unit:"$"},
-    {Metric:"AI Hours Saved","Current Value":"387",Target:"750",Unit:"hours"},
-    {Metric:"AI Prompts Created","Current Value":"0",Target:"15",Unit:"count"},
-    {Metric:"Architecture Assets Created","Current Value":"3",Target:"10",Unit:"count"},
-    {Metric:"Days Remaining","Current Value":"180",Target:"0",Unit:"days"}
+  <!-- ===== OVERVIEW ===== -->
+  <div class="page active" id="page-overview">
+    <div class="cards">
+      <div class="card"><div class="ico">🎯</div><div class="lbl">Readiness</div><div class="metric" id="kpiReadiness">72%</div><div class="sub">Overall promotion readiness</div><div class="ring"></div></div>
+      <div class="card"><div class="ico">👥</div><div class="lbl">People Trained</div><div class="metric" id="kpiPeople">4</div><div class="sub">Across MCE + MCP</div><div class="ring"></div></div>
+      <div class="card"><div class="ico">💼</div><div class="lbl">Billable Resources</div><div class="metric" id="kpiBillable">2</div><div class="sub">Target 4</div><div class="ring"></div></div>
+      <div class="card"><div class="ico">💰</div><div class="lbl">Revenue Influenced</div><div class="metric" id="kpiRevenue">$48.5K</div><div class="sub">Target $100K</div><div class="ring"></div></div>
+      <div class="card"><div class="ico">⚡</div><div class="lbl">AI Hours Saved</div><div class="metric" id="kpiHours">387</div><div class="sub">Cumulative</div><div class="ring"></div></div>
+      <div class="card"><div class="ico">⏳</div><div class="lbl">Days Remaining</div><div class="metric" id="kpiDays">180</div><div class="sub">To review date</div><div class="ring"></div></div>
+    </div>
+    <div class="row2">
+      <div class="section">
+        <h2>Promotion Scorecard</h2>
+        <p class="desc">Current progress vs. target across the five promotion criteria.</p>
+        <div class="chart-box"><canvas id="scorecardChart"></canvas></div>
+        <table id="scorecardTable" style="margin-top:14px"></table>
+      </div>
+      <div class="section">
+        <h2>Readiness Gauge</h2>
+        <p class="desc">Composite of all weighted criteria.</p>
+        <div class="chart-box" style="position:relative">
+          <canvas id="gaugeChart"></canvas>
+          <div class="gauge-center"><div class="g-num" id="gaugeNum">72%</div><div class="g-lbl">READY</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ANALYTICS ===== -->
+  <div class="page" id="page-analytics">
+    <div class="row2b">
+      <div class="section">
+        <h2>Revenue by Trainee</h2>
+        <p class="desc">Billable revenue influenced per developer.</p>
+        <div class="chart-box sm"><canvas id="revenueChart"></canvas></div>
+      </div>
+      <div class="section">
+        <h2>Architecture Asset Value</h2>
+        <p class="desc">Reusable IP value contribution by asset.</p>
+        <div class="chart-box sm"><canvas id="assetChart"></canvas></div>
+      </div>
+    </div>
+    <div class="row2b">
+      <div class="section">
+        <h2>Utilization by Trainee</h2>
+        <p class="desc">Current billable utilization across the team.</p>
+        <div class="chart-box sm"><canvas id="utilChart"></canvas></div>
+      </div>
+      <div class="section">
+        <h2>AI Hours Saved by Prompt</h2>
+        <p class="desc">Estimated hours saved per reusable prompt.</p>
+        <div class="chart-box sm"><canvas id="promptChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MCE ===== -->
+  <div class="page" id="page-mce">
+    <section class="section">
+      <div class="sec-head">
+        <div><h2>MCE Training Program</h2><p class="desc">Mid-Career Engineers you are developing into billable resources.</p></div>
+        <button class="btn primary sm" onclick="openForm('trainee','MCE')">+ Add trainee</button>
+      </div>
+      <table id="mceTable"></table>
+    </section>
+  </div>
+
+  <!-- ===== MCP ===== -->
+  <div class="page" id="page-mcp">
+    <section class="section">
+      <div class="sec-head">
+        <div><h2>MCP Training Program</h2><p class="desc">Master Certified Professionals in development.</p></div>
+        <button class="btn primary sm" onclick="openForm('trainee','MCP')">+ Add trainee</button>
+      </div>
+      <table id="mcpTable"></table>
+    </section>
+  </div>
+
+  <!-- ===== AI ===== -->
+  <div class="page" id="page-ai">
+    <section class="section">
+      <div class="sec-head">
+        <div><h2>AI / Vulcan Prompt Portfolio</h2><p class="desc">Reusable prompts and automations driving hours saved.</p></div>
+        <button class="btn primary sm" onclick="openForm('prompt')">+ Add prompt</button>
+      </div>
+      <table id="promptTable"></table>
+    </section>
+  </div>
+
+  <!-- ===== ASSETS ===== -->
+  <div class="page" id="page-assets">
+    <section class="section">
+      <div class="sec-head">
+        <div><h2>Architecture Assets</h2><p class="desc">Reusable architecture IP and its dollar value.</p></div>
+        <button class="btn primary sm" onclick="openForm('asset')">+ Add asset</button>
+      </div>
+      <table id="assetTable"></table>
+    </section>
+  </div>
+
+  <!-- ===== EVIDENCE ===== -->
+  <div class="page" id="page-evidence">
+    <section class="section">
+      <div class="sec-head">
+        <div><h2>Principal Architect Evidence</h2><p class="desc">Logged evidence mapped to promotion criteria.</p></div>
+        <button class="btn primary sm" onclick="openForm('evidence')">+ Log evidence</button>
+      </div>
+      <table id="evidenceTable"></table>
+    </section>
+  </div>
+
+  <!-- ===== GOALS ===== -->
+  <div class="page" id="page-goals">
+    <section class="section">
+      <div class="sec-head">
+        <div><h2>Goals</h2><p class="desc">Quarterly and annual development goals.</p></div>
+        <button class="btn primary sm" onclick="openForm('goal')">+ Add goal</button>
+      </div>
+      <table id="goalTable"></table>
+    </section>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <header><h3 id="modalTitle">Add</h3><p id="modalSub">Saves directly to your tracker</p></header>
+    <div class="body" id="modalBody"></div>
+    <footer>
+      <button class="btn ghost" onclick="closeForm()">Cancel</button>
+      <button class="btn primary" id="modalSave" onclick="submitForm()">Save entry</button>
+    </footer>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   CONFIG — paste your Apps Script Web App URL.
+   READ:  GET  API_URL?action=getAll
+   WRITE: POST API_URL  { action:"add", sheet, row:{...} }
+   See BACKEND_SETUP.md for the doPost handler.
+========================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycby92tkowHqyUZwT_n5oFTUfsCZ8_0cwy3f3pX4v3uuG2MRbwpZ47RK4hauXH7ZAHXBN/exec";
+
+/* ---------- tabs ---------- */
+const TABS = [
+  {id:"overview", ic:"📊", label:"Overview",            desc:"Your promotion readiness at a glance."},
+  {id:"analytics",ic:"📈", label:"Analytics",            desc:"Deeper charts across revenue, utilization and impact."},
+  {id:"mce",      ic:"🧑‍💻", label:"MCE Training",        desc:"Mid-Career Engineers in development."},
+  {id:"mcp",      ic:"🎓", label:"MCP Training",          desc:"Master Certified Professionals in development."},
+  {id:"ai",       ic:"⚡", label:"AI / Vulcan",           desc:"Reusable prompt portfolio."},
+  {id:"assets",   ic:"🏗️", label:"Architecture Assets",   desc:"Reusable architecture IP and value."},
+  {id:"evidence", ic:"📁", label:"Evidence",              desc:"Logged evidence for your promotion case."},
+  {id:"goals",    ic:"🎯", label:"Goals",                 desc:"Quarterly and annual development goals."}
+];
+let currentTab = "overview";
+
+function buildNav(){
+  $("nav").innerHTML = TABS.map(t=>`<button data-tab="${t.id}" onclick="showTab('${t.id}')"><span class="ic">${t.ic}</span>${t.label}</button>`).join("");
+  $("mtabs").innerHTML = TABS.map(t=>`<button data-tab="${t.id}" onclick="showTab('${t.id}')">${t.label}</button>`).join("");
+}
+function showTab(id){
+  currentTab=id;
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+id));
+  document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+  const t=TABS.find(x=>x.id===id);
+  $("pageTitle").textContent=t.label; $("pageDesc").textContent=t.desc;
+  window.scrollTo({top:0,behavior:"smooth"});
+  renderChartsFor(id);
+}
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+function num(v){ return Number(String(v ?? "0").replace(/[$,%\s]/g,"")) || 0; }
+function money(v){ const n=num(v); if(!n) return "$0"; return n>=1000 ? "$"+(n/1000).toFixed(1)+"K" : "$"+n.toLocaleString(); }
+function pct(v){ const raw=String(v ?? "0"); if(raw.includes("%")) return raw; const n=num(raw); return (n<=1? Math.round(n*100):Math.round(n))+"%"; }
+function toast(msg,err){ const t=$("toast"); t.textContent=msg; t.className="toast show"+(err?" err":""); setTimeout(()=>t.className="toast",2600); }
+function statusBadge(s){
+  s=(s||"").toLowerCase();
+  if(s.includes("billable")||s.includes("done")||s.includes("complete")||s.includes("live")) return "green";
+  if(s.includes("progress")||s.includes("training")||s.includes("draft")||s.includes("review")) return "amber";
+  if(s.includes("plan")||s.includes("backlog")||s.includes("not")) return "gray";
+  return "blue";
+}
+function progressCell(p){
+  const v=Math.max(0,Math.min(100,Math.round(num(p)<=1?num(p)*100:num(p))));
+  const cls = v>=80?"green":v>=50?"amber":"red";
+  return `<div class="progwrap"><div class="progress"><div class="bar ${cls}" style="width:${v}%"></div></div><span class="prog-num">${v}%</span></div>`;
+}
+
+/* ---------- sample data ---------- */
+const SAMPLE = {
+  Dashboard_Metrics: [
+    {Metric:"Principal Architect Readiness",["Current Value"]:72,Target:100,Unit:"%"},
+    {Metric:"Billable Resources",["Current Value"]:2,Target:4,Unit:""},
+    {Metric:"Average Utilization",["Current Value"]:62,Target:70,Unit:"%"},
+    {Metric:"Revenue Generated",["Current Value"]:48500,Target:100000,Unit:"$"},
+    {Metric:"AI Prompts",["Current Value"]:6,Target:15,Unit:""},
+    {Metric:"Architecture Assets",["Current Value"]:3,Target:10,Unit:""},
+    {Metric:"People Trained",["Current Value"]:4,Target:6,Unit:""},
+    {Metric:"AI Hours Saved",["Current Value"]:387,Target:500,Unit:""},
+    {Metric:"Days Remaining",["Current Value"]:180,Target:0,Unit:""}
   ],
-  Trainees:[
-    {Name:"Jerry",Program:"MCE",Status:"Billable","Current Utilization":"62%","Active Projects":"Lincoln; Everest",Notes:"Actively billable."},
-    {Name:"Alyssa",Program:"MCE",Status:"Billable","Current Utilization":"48%","Active Projects":"Covetrus",Notes:"Training on MC tasks."}
+  Trainees: [
+    {Name:"Jerry",Program:"MCE",Status:"Billable",["Current Utilization"]:62,Revenue:14200,["Active Projects"]:"Lincoln; Everest"},
+    {Name:"Alyssa",Program:"MCE",Status:"Billable",["Current Utilization"]:48,Revenue:9800,["Active Projects"]:"Covetrus"},
+    {Name:"Marcus",Program:"MCE",Status:"In Training",["Current Utilization"]:30,Revenue:4200,["Active Projects"]:"Internal"},
+    {Name:"Priya",Program:"MCP",Status:"In Training",["Current Utilization"]:25,Revenue:0,["Active Projects"]:"Shadowing Lincoln"}
   ],
-  Prompt_Portfolio:[
-    {"Prompt Name":"Landing Page Generator",Platform:"MCE",Status:"Planned","Est Hours Saved / Use":"10",Notes:"Landing page creator with AMPscript capability."},
-    {"Prompt Name":"SQL Generator",Platform:"MCE",Status:"Planned","Est Hours Saved / Use":"5",Notes:"SQL query generator."},
-    {"Prompt Name":"ERD Diagram Creator",Platform:"Data Cloud",Status:"Planned","Est Hours Saved / Use":"10",Notes:"ERD diagram creator."},
-    {"Prompt Name":"Sitemap Creator",Platform:"MCP",Status:"Planned","Est Hours Saved / Use":"8",Notes:"Sitemap generation."}
+  Prompt_Portfolio: [
+    {["Prompt Name"]:"Solution Design Generator",Platform:"Vulcan",Status:"Live",["Est Hours Saved / Use"]:6,Notes:"Used on 4 SOWs"},
+    {["Prompt Name"]:"Architecture Review Checklist",Platform:"Claude",Status:"Live",["Est Hours Saved / Use"]:3,Notes:"Standardized reviews"},
+    {["Prompt Name"]:"RFP Response Drafter",Platform:"Vulcan",Status:"Draft",["Est Hours Saved / Use"]:8,Notes:"In testing"}
   ],
-  Architecture_Assets:[
-    {"Asset Name":"MCE Training Program",Category:"Training",Status:"Live","Projects Using":"15","Dollar Value":"27000"},
-    {"Asset Name":"QA Framework",Category:"Delivery Standard",Status:"In Progress","Projects Using":"11","Dollar Value":"18000"}
+  Architecture_Assets: [
+    {["Asset Name"]:"Reference Integration Pattern",Category:"Pattern",Status:"Live",["Projects Using"]:"Lincoln; Covetrus",["Dollar Value"]:22000},
+    {["Asset Name"]:"Data Migration Framework",Category:"Framework",Status:"In Progress",["Projects Using"]:"Everest",["Dollar Value"]:15000},
+    {["Asset Name"]:"Security Baseline Template",Category:"Template",Status:"Live",["Projects Using"]:"Lincoln",["Dollar Value"]:11500}
   ],
-  Evidence_Log:[
-    {Date:"2026-07-15",Category:"Training","Evidence Title":"Jerry became billable","Metric Impact":"Billable resource created"},
-    {Date:"2026-08-01",Category:"AI","Evidence Title":"Landing Page Generator prototype","Metric Impact":"10 hours saved/use target"}
+  Evidence_Log: [
+    {Date:"2026-05-12",Category:"Revenue",["Evidence Title"]:"Closed Lincoln expansion SOW",["Metric Impact"]:"+$28K"},
+    {Date:"2026-04-30",Category:"Mentorship",["Evidence Title"]:"Jerry reached billable status",["Metric Impact"]:"+1 billable"},
+    {Date:"2026-04-08",Category:"Innovation",["Evidence Title"]:"Shipped integration pattern asset",["Metric Impact"]:"+$22K reuse"}
   ],
-  Goals:[
-    {"Goal Name":"Move 2 MCE trainees to 70% utilization","Goal Type":"Training",Current:"55%",Target:"70%",Progress:"79%"},
-    {"Goal Name":"Create 15 AI/Vulcan prompts","Goal Type":"AI",Current:"0",Target:"15",Progress:"0%"}
+  Goals: [
+    {["Goal Name"]:"4 billable resources",["Goal Type"]:"Team",Current:2,Target:4,Progress:50},
+    {["Goal Name"]:"$100K influenced revenue",["Goal Type"]:"Revenue",Current:48500,Target:100000,Progress:49},
+    {["Goal Name"]:"15 reusable AI prompts",["Goal Type"]:"AI",Current:6,Target:15,Progress:40},
+    {["Goal Name"]:"10 architecture assets",["Goal Type"]:"IP",Current:3,Target:10,Progress:30}
   ]
 };
 
-function cleanNum(v){return Number(String(v||"0").replace(/[$,% ,]/g,""))||0}
-function money(v){const n=cleanNum(v);return n>=1000?"$"+(n/1000).toFixed(1)+"K":"$"+n.toLocaleString()}
-function pct(v){const s=String(v||"0");if(s.includes("%"))return s;const n=Number(s)||0;return n<=1?Math.round(n*100)+"%":Math.round(n)+"%"}
-function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
-function rows(tableId,headers,data,map){const t=document.getElementById(tableId);t.innerHTML="<tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr>"; if(!data.length){t.innerHTML+=`<tr><td colspan="${headers.length}" class="empty">No rows yet.</td></tr>`;return} data.forEach(r=>{t.innerHTML+="<tr>"+map(r).map(v=>`<td>${v??""}</td>`).join("")+"</tr>"})}
-function render(data){
- const metrics=data.Dashboard_Metrics||[]; const get=n=>metrics.find(m=>m.Metric===n)?.["Current Value"];
- setText("kpiReadiness",pct(get("Principal Architect Readiness"))); setText("kpiPeople",get("People Trained")||0); setText("kpiBillable",get("Billable Resources")||0); setText("kpiRevenue",money(get("Revenue Influenced"))); setText("kpiHours",get("AI Hours Saved")||0); setText("kpiDays",get("Days Remaining")||0);
- rows("scorecardTable",["Category","Current","Target","Progress"],metrics.filter(m=>!["Principal Architect Readiness","Days Remaining"].includes(m.Metric)),m=>[m.Metric,m.Unit==="$"?money(m["Current Value"]):m.Unit==="%"?pct(m["Current Value"]):m["Current Value"],m.Unit==="$"?money(m.Target):m.Unit==="%"?pct(m.Target):m.Target,m.Target?pct(cleanNum(m["Current Value"])/cleanNum(m.Target)):""]);
- const trainees=data.Trainees||[];
- rows("mceTable",["Name","Status","Utilization","Projects","Notes"],trainees.filter(t=>t.Program==="MCE"),t=>[t.Name,t.Status,pct(t["Current Utilization"]),t["Active Projects"],t.Notes]);
- rows("mcpTable",["Name","Status","Utilization","Projects","Notes"],trainees.filter(t=>t.Program==="MCP"),t=>[t.Name,t.Status,pct(t["Current Utilization"]),t["Active Projects"],t.Notes]);
- rows("promptTable",["Prompt","Platform","Status","Hours / Use","Notes"],data.Prompt_Portfolio||[],p=>[p["Prompt Name"],p.Platform,p.Status,p["Est Hours Saved / Use"],p.Notes]);
- rows("assetTable",["Asset","Category","Status","Projects","Value"],data.Architecture_Assets||[],a=>[a["Asset Name"],a.Category,a.Status,a["Projects Using"],money(a["Dollar Value"])]);
- rows("evidenceTable",["Date","Category","Evidence","Impact"],data.Evidence_Log||[],e=>[e.Date,e.Category,e["Evidence Title"],e["Metric Impact"]]);
- rows("goalTable",["Goal","Type","Current","Target","Progress"],data.Goals||[],g=>[g["Goal Name"],g["Goal Type"],g.Current,g.Target,pct(g.Progress)]);
+let DATA = JSON.parse(JSON.stringify(SAMPLE));
+let charts = {};
+
+/* ---------- table renderer ---------- */
+function renderTable(id, headers, rows, mapFn, emptyMsg){
+  const t=$(id);
+  let html = "<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead><tbody>";
+  if(!rows || !rows.length){
+    html += `<tr><td colspan="${headers.length}" class="empty">${emptyMsg||"No entries yet — use the + button to add one."}</td></tr>`;
+  } else {
+    rows.forEach(r=> html += "<tr>"+mapFn(r).map(c=>`<td>${c??""}</td>`).join("")+"</tr>");
+  }
+  t.innerHTML = html+"</tbody>";
 }
-async function load(){
- if(!API_URL || API_URL.includes("PASTE_YOUR")){render(sample);return}
- try{const res=await fetch(API_URL+"?action=getAll");const json=await res.json();document.getElementById("connectionStatus").textContent="Connected to Google Sheet";render(json.data||sample)}
- catch(e){document.getElementById("connectionStatus").textContent="Could not connect to Google Sheet";render(sample)}
+
+/* ---------- render tables + KPIs ---------- */
+function render(){
+  const metrics = DATA.Dashboard_Metrics||[];
+  const m = name => metrics.find(x=>x.Metric===name)||{};
+  const cur = name => m(name)["Current Value"];
+
+  $("kpiReadiness").textContent = pct(cur("Principal Architect Readiness"));
+  $("kpiPeople").textContent   = (DATA.Trainees||[]).length || (cur("People Trained")??0);
+  $("kpiBillable").textContent = cur("Billable Resources")??0;
+  $("kpiRevenue").textContent  = money(cur("Revenue Generated"));
+  $("kpiHours").textContent    = cur("AI Hours Saved")??0;
+  $("kpiDays").textContent     = cur("Days Remaining")??0;
+  $("footDays").textContent    = (cur("Days Remaining")??0)+" days left";
+
+  const score = metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
+  renderTable("scorecardTable",["Category","Current","Target","Progress"],score, x=>{
+    const u=x.Unit, fmt=v=> u==="$"?money(v): u==="%"?pct(v): v;
+    const prog = num(x.Target)? Math.round(num(x["Current Value"])/num(x.Target)*100):0;
+    return [x.Metric, fmt(x["Current Value"]), fmt(x.Target), progressCell(prog)];
+  });
+
+  const tr = DATA.Trainees||[];
+  const traineeRow = t=>[t.Name,`<span class="pill ${statusBadge(t.Status)}">${t.Status||""}</span>`,progressCell(t["Current Utilization"]),money(t.Revenue),t["Active Projects"]||""];
+  renderTable("mceTable",["Name","Status","Utilization","Revenue","Projects"],tr.filter(t=>t.Program==="MCE"),traineeRow,"No MCE trainees yet.");
+  renderTable("mcpTable",["Name","Status","Utilization","Revenue","Projects"],tr.filter(t=>t.Program==="MCP"),traineeRow,"No MCP trainees yet.");
+
+  renderTable("promptTable",["Prompt","Platform","Status","Hrs Saved / Use","Notes"],DATA.Prompt_Portfolio||[],
+    p=>[p["Prompt Name"],`<span class="pill purple">${p.Platform||""}</span>`,`<span class="pill ${statusBadge(p.Status)}">${p.Status||""}</span>`,p["Est Hours Saved / Use"]??"",p.Notes||""]);
+
+  renderTable("assetTable",["Asset","Category","Status","Projects","Value"],DATA.Architecture_Assets||[],
+    a=>[a["Asset Name"],`<span class="pill blue">${a.Category||""}</span>`,`<span class="pill ${statusBadge(a.Status)}">${a.Status||""}</span>`,a["Projects Using"]||"",money(a["Dollar Value"])]);
+
+  renderTable("evidenceTable",["Date","Category","Evidence","Impact"],DATA.Evidence_Log||[],
+    e=>[e.Date,`<span class="pill gray">${e.Category||""}</span>`,e["Evidence Title"],`<b style="color:#047857">${e["Metric Impact"]||""}</b>`]);
+
+  renderTable("goalTable",["Goal","Type","Current","Target","Progress"],DATA.Goals||[],
+    g=>[g["Goal Name"],`<span class="pill blue">${g["Goal Type"]||""}</span>`,g.Current,g.Target,progressCell(g.Progress)]);
+
+  renderChartsFor(currentTab);
 }
-load();
+
+/* ---------- charts (rendered only for the visible tab) ---------- */
+const PALETTE=["#2563eb","#7c3aed","#06b6d4","#16a34a","#f59e0b","#ef4444","#0ea5e9","#db2777"];
+function destroy(...keys){ keys.forEach(k=>{ if(charts[k]){charts[k].destroy(); charts[k]=null;} }); }
+
+function renderChartsFor(tab){
+  Chart.defaults.font.family="Inter,system-ui,sans-serif";
+  Chart.defaults.color="#64748b";
+  const metrics=DATA.Dashboard_Metrics||[];
+  const m=name=>metrics.find(x=>x.Metric===name)||{};
+
+  if(tab==="overview"){
+    destroy("gauge","scorecard");
+    const readiness=num(m("Principal Architect Readiness")["Current Value"]);
+    $("gaugeNum").textContent=readiness+"%";
+    charts.gauge=new Chart($("gaugeChart"),{type:"doughnut",
+      data:{datasets:[{data:[readiness,100-readiness],backgroundColor:["#2563eb","#e9eef6"],borderWidth:0}]},
+      options:{rotation:-90,circumference:180,cutout:"72%",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}}}});
+    const score=metrics.filter(x=>["Billable Resources","Average Utilization","Revenue Generated","AI Prompts","Architecture Assets"].includes(x.Metric));
+    charts.scorecard=new Chart($("scorecardChart"),{type:"bar",
+      data:{labels:score.map(x=>x.Metric),datasets:[{label:"% to target",
+        data:score.map(x=>num(x.Target)?Math.round(num(x["Current Value"])/num(x.Target)*100):0),
+        backgroundColor:"#2563eb",borderRadius:6,barThickness:22}]},
+      options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,
+        scales:{x:{max:100,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"%"}},y:{grid:{display:false}}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+"% to target"}}}}});
+  }
+
+  if(tab==="analytics"){
+    destroy("revenue","asset","util","prompt");
+    const tr=(DATA.Trainees||[]).filter(t=>num(t.Revenue)>0);
+    charts.revenue=new Chart($("revenueChart"),{type:"bar",
+      data:{labels:tr.map(t=>t.Name),datasets:[{data:tr.map(t=>num(t.Revenue)),backgroundColor:PALETTE,borderRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:"#eef2f9"},ticks:{callback:v=>"$"+(v/1000)+"K"}},x:{grid:{display:false}}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>money(c.parsed.y)}}}}});
+
+    const as=DATA.Architecture_Assets||[];
+    charts.asset=new Chart($("assetChart"),{type:"doughnut",
+      data:{labels:as.map(a=>a["Asset Name"]),datasets:[{data:as.map(a=>num(a["Dollar Value"])),backgroundColor:PALETTE,borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:"60%",
+        plugins:{legend:{position:"right",labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:c=>c.label+": "+money(c.parsed)}}}}});
+
+    const allTr=DATA.Trainees||[];
+    charts.util=new Chart($("utilChart"),{type:"bar",
+      data:{labels:allTr.map(t=>t.Name),datasets:[{data:allTr.map(t=>num(t["Current Utilization"])),backgroundColor:"#7c3aed",borderRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:100,grid:{color:"#eef2f9"},ticks:{callback:v=>v+"%"}},x:{grid:{display:false}}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+"%"}}}}});
+
+    const pp=DATA.Prompt_Portfolio||[];
+    charts.prompt=new Chart($("promptChart"),{type:"bar",
+      data:{labels:pp.map(p=>p["Prompt Name"]),datasets:[{data:pp.map(p=>num(p["Est Hours Saved / Use"])),backgroundColor:"#06b6d4",borderRadius:6,barThickness:24}]},
+      options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,scales:{x:{grid:{color:"#eef2f9"},ticks:{callback:v=>v+"h"}},y:{grid:{display:false}}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+" hrs / use"}}}}});
+  }
+}
+
+/* ---------- data entry forms ---------- */
+const FORMS = {
+  trainee:{ title:"Add Trainee", sheet:"Trainees", fields:[
+    {k:"Name",label:"Name",type:"text",req:true},
+    {k:"Program",label:"Program",type:"select",opts:["MCE","MCP"]},
+    {k:"Status",label:"Status",type:"select",opts:["In Training","Billable","Shadowing","On Hold"]},
+    {k:"Current Utilization",label:"Utilization %",type:"number"},
+    {k:"Revenue",label:"Revenue influenced ($)",type:"number"},
+    {k:"Active Projects",label:"Active projects",type:"text"}
+  ]},
+  prompt:{ title:"Add AI Prompt", sheet:"Prompt_Portfolio", fields:[
+    {k:"Prompt Name",label:"Prompt name",type:"text",req:true},
+    {k:"Platform",label:"Platform",type:"select",opts:["Vulcan","Claude","ChatGPT","Other"]},
+    {k:"Status",label:"Status",type:"select",opts:["Draft","In Review","Live","Retired"]},
+    {k:"Est Hours Saved / Use",label:"Est. hours saved / use",type:"number"},
+    {k:"Notes",label:"Notes",type:"textarea"}
+  ]},
+  asset:{ title:"Add Architecture Asset", sheet:"Architecture_Assets", fields:[
+    {k:"Asset Name",label:"Asset name",type:"text",req:true},
+    {k:"Category",label:"Category",type:"select",opts:["Pattern","Framework","Template","Tool","Reference"]},
+    {k:"Status",label:"Status",type:"select",opts:["Planned","In Progress","Live"]},
+    {k:"Projects Using",label:"Projects using",type:"text"},
+    {k:"Dollar Value",label:"Dollar value ($)",type:"number"}
+  ]},
+  evidence:{ title:"Log Evidence", sheet:"Evidence_Log", fields:[
+    {k:"Date",label:"Date",type:"date",req:true},
+    {k:"Category",label:"Category",type:"select",opts:["Revenue","Mentorship","Innovation","Delivery","Leadership"]},
+    {k:"Evidence Title",label:"What happened",type:"text",req:true},
+    {k:"Metric Impact",label:"Measurable impact",type:"text"}
+  ]},
+  goal:{ title:"Add Goal", sheet:"Goals", fields:[
+    {k:"Goal Name",label:"Goal",type:"text",req:true},
+    {k:"Goal Type",label:"Type",type:"select",opts:["Team","Revenue","AI","IP","Personal"]},
+    {k:"Current",label:"Current value",type:"number"},
+    {k:"Target",label:"Target value",type:"number"}
+  ]}
+};
+
+let activeForm=null, presetProgram=null;
+function openForm(type,preset){
+  activeForm=type; presetProgram=preset||null;
+  const f=FORMS[type];
+  $("modalTitle").textContent=f.title;
+  $("modalSub").textContent = (API_URL.includes("PASTE_YOUR")?"Demo mode — saved to this view only":"Saves to your Google Sheet");
+  $("modalBody").innerHTML=f.fields.map(fl=>{
+    const val = (fl.k==="Program"&&preset)?preset:"";
+    if(fl.type==="select") return `<div class="field"><label>${fl.label}</label><select data-k="${fl.k}">${fl.opts.map(o=>`<option ${o===val?"selected":""}>${o}</option>`).join("")}</select></div>`;
+    if(fl.type==="textarea") return `<div class="field"><label>${fl.label}</label><textarea data-k="${fl.k}" rows="2"></textarea></div>`;
+    return `<div class="field"><label>${fl.label}${fl.req?" *":""}</label><input data-k="${fl.k}" type="${fl.type}" value="${val}"></div>`;
+  }).join("");
+  $("modalBg").classList.add("show");
+}
+function closeForm(){ $("modalBg").classList.remove("show"); activeForm=null; }
+
+async function submitForm(){
+  const f=FORMS[activeForm];
+  const row={}; let missing=false;
+  $("modalBody").querySelectorAll("[data-k]").forEach(el=>{
+    row[el.dataset.k]=el.value;
+    const fl=f.fields.find(x=>x.k===el.dataset.k);
+    if(fl&&fl.req&&!el.value.trim()) missing=true;
+  });
+  if(missing){ toast("Fill in required fields",true); return; }
+  if(presetProgram&&!row.Program) row.Program=presetProgram;
+  if(activeForm==="goal" && num(row.Target)) row.Progress=Math.round(num(row.Current)/num(row.Target)*100);
+
+  $("modalSave").textContent="Saving…"; $("modalSave").disabled=true;
+  (DATA[f.sheet]=DATA[f.sheet]||[]).unshift(row);
+
+  if(!API_URL.includes("PASTE_YOUR")){
+    try{
+      await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"add",sheet:f.sheet,row})});
+      toast("Saved to Google Sheet ✓");
+    }catch(e){ toast("Saved locally — sync failed",true); }
+  } else { toast("Added (demo mode) ✓"); }
+
+  $("modalSave").textContent="Save entry"; $("modalSave").disabled=false;
+  closeForm(); render();
+}
+
+/* ---------- load from backend ---------- */
+async function loadData(){
+  if(!API_URL || API_URL.includes("PASTE_YOUR")){ render(); return; }
+  const badge=$("connectionStatus");
+  badge.className="status"; badge.innerHTML='<span class="pulse"></span>Connecting…';
+  try{
+    const res=await fetch(API_URL+"?action=getAll");
+    const json=await res.json(); const d=json.data||{};
+    DATA={
+      Dashboard_Metrics: d.Dashboard_Metrics||SAMPLE.Dashboard_Metrics,
+      Trainees: d.Trainees||[], Prompt_Portfolio: d.Prompt_Portfolio||[],
+      Architecture_Assets: d.Architecture_Assets||[], Evidence_Log: d.Evidence_Log||[], Goals: d.Goals||[]
+    };
+    badge.className="status ok"; badge.innerHTML='<span class="pulse"></span>Connected to Google Sheet';
+    render();
+  }catch(err){
+    console.error(err);
+    badge.className="status err"; badge.innerHTML='<span class="pulse"></span>Could not connect — showing sample data';
+    DATA=JSON.parse(JSON.stringify(SAMPLE)); render();
+  }
+}
+
+$("modalBg").addEventListener("click",e=>{ if(e.target===$("modalBg")) closeForm(); });
+buildNav();
+showTab("overview");
+loadData();
 </script>
 </body>
 </html>
